@@ -27,6 +27,13 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Prepare runtime configuration
+        uses: ionos-deploy-now/template-renderer-action@v2
+        with:
+          input-directory: .deploy-now/rechtsschutzpartner24
+          output-directory: .
+          intermediate-data-file: .template-renderer-data
+
 # Please do not touch the following action
       - name: Store deployment content
         uses: ionos-deploy-now/artifact-action@v1
