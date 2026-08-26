@@ -20,6 +20,137 @@ function clean_value(string $key, int $maxLength = 300): string
         : substr($value, 0, $maxLength);
 }
 
+/**
+ * @param array<string, string> $config
+ */
+function config_value(array $config, string $key): string
+{
+    $environmentValue = getenv($key);
+    if ($environmentValue !== false && $environmentValue !== '') {
+        return $environmentValue;
+    }
+
+    return trim((string)($config[$key] ?? ''));
+}
+
+/**
+ * @param resource $socket
+ * @param int[] $expectedCodes
+ */
+function smtp_response($socket, array $expectedCodes): string
+{
+    $response = '';
+
+    while (($line = fgets($socket, 515)) !== false) {
+        $response .= $line;
+        if (strlen($line) >= 4 && $line[3] === ' ') {
+            break;
+        }
+    }
+
+    $code = (int)substr($response, 0, 3);
+    if (!in_array($code, $expectedCodes, true)) {
+        throw new RuntimeException('Unerwartete SMTP-Antwort: ' . trim($response));
+    }
+
+    return $response;
+}
+
+/**
+ * @param resource $socket
+ * @param int[] $expectedCodes
+ */
+function smtp_command($socket, string $command, array $expectedCodes): string
+{
+    if (fwrite($socket, $command . "\r\n") === false) {
+        throw new RuntimeException('SMTP-Befehl konnte nicht gesendet werden.');
+    }
+
+    return smtp_response($socket, $expectedCodes);
+}
+
+/**
+ * @param array<string, string> $config
+ */
+function send_via_smtp(
+    array $config,
+    string $recipient,
+    string $replyTo,
+    string $subject,
+    string $message
+): void {
+    $host = config_value($config, 'MAIL_HOST');
+    $port = (int)config_value($config, 'MAIL_PORT');
+    $username = config_value($config, 'MAIL_USERNAME');
+    $password = config_value($config, 'MAIL_PASSWORD');
+    $encryption = strtolower(config_value($config, 'MAIL_ENCRYPTION'));
+    $fromAddress = config_value($config, 'MAIL_FROM_ADDRESS');
+
+    if ($host === '' || $port < 1 || $username === '' || $password === '' || $fromAddress === '') {
+        throw new RuntimeException('Die SMTP-Konfiguration ist unvollständig.');
+    }
+
+    $transport = in_array($encryption, ['ssl', 'smtps'], true) ? 'ssl://' : 'tcp://';
+    $socket = @stream_socket_client(
+        $transport . $host . ':' . $port,
+        $errorNumber,
+        $errorMessage,
+        15,
+        STREAM_CLIENT_CONNECT
+    );
+
+    if ($socket === false) {
+        throw new RuntimeException('SMTP-Verbindung fehlgeschlagen: ' . $errorNumber . ' ' . $errorMessage);
+    }
+
+    try {
+        stream_set_timeout($socket, 15);
+        smtp_response($socket, [220]);
+        smtp_command($socket, 'EHLO rechtsschutzpartner24.de', [250]);
+
+        if (in_array($encryption, ['tls', 'starttls'], true)) {
+            smtp_command($socket, 'STARTTLS', [220]);
+            if (stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT) !== true) {
+                throw new RuntimeException('Die verschlüsselte SMTP-Verbindung konnte nicht aufgebaut werden.');
+            }
+            smtp_command($socket, 'EHLO rechtsschutzpartner24.de', [250]);
+        }
+
+        smtp_command($socket, 'AUTH LOGIN', [334]);
+        smtp_command($socket, base64_encode($username), [334]);
+        smtp_command($socket, base64_encode($password), [235]);
+        smtp_command($socket, 'MAIL FROM:<' . $fromAddress . '>', [250]);
+        smtp_command($socket, 'RCPT TO:<' . $recipient . '>', [250, 251]);
+        smtp_command($socket, 'DATA', [354]);
+
+        $headers = [
+            'From: RechtsschutzPartner24 <' . $fromAddress . '>',
+            'Reply-To: ' . $replyTo,
+            'To: <' . $recipient . '>',
+            'Subject: =?UTF-8?B?' . base64_encode($subject) . '?=',
+            'Date: ' . date(DATE_RFC2822),
+            'Message-ID: <' . bin2hex(random_bytes(12)) . '@rechtsschutzpartner24.de>',
+            'MIME-Version: 1.0',
+            'Content-Type: text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding: 8bit',
+            'X-Mailer: RechtsschutzPartner24'
+        ];
+
+        $normalizedMessage = str_replace(["\r\n", "\r"], "\n", $message);
+        $normalizedMessage = str_replace("\n", "\r\n", $normalizedMessage);
+        $normalizedMessage = preg_replace('/(?m)^\./', '..', $normalizedMessage) ?? $normalizedMessage;
+
+        if (fwrite($socket, implode("\r\n", $headers) . "\r\n\r\n" . $normalizedMessage . "\r\n.\r\n") === false) {
+            throw new RuntimeException('Die E-Mail-Daten konnten nicht übertragen werden.');
+        }
+
+        smtp_response($socket, [250]);
+        smtp_command($socket, 'QUIT', [221]);
+    } finally {
+        fclose($socket);
+    }
+}
+
 if (clean_value('website') !== '') {
     echo json_encode(['ok' => true]);
     exit;
@@ -93,18 +224,15 @@ $lines = [
     'Eingegangen am: ' . (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->format('d.m.Y H:i') . ' Uhr'
 ];
 
-$headers = [
-    'From: RechtsschutzPartner24 <info@rechtsschutzpartner24.de>',
-    'Reply-To: ' . $data['email'],
-    'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
-    'X-Mailer: PHP/' . PHP_VERSION
-];
+$configPath = __DIR__ . '/.env';
+$config = is_readable($configPath)
+    ? (parse_ini_file($configPath, false, INI_SCANNER_RAW) ?: [])
+    : [];
 
-$sent = mail($recipient, $subject, implode("\r\n", $lines), implode("\r\n", $headers));
-
-if (!$sent) {
+try {
+    send_via_smtp($config, $recipient, $data['email'], $subject, implode("\r\n", $lines));
+} catch (Throwable $error) {
+    error_log('Kontaktformular: ' . $error->getMessage());
     http_response_code(500);
     echo json_encode(['ok' => false, 'message' => 'Die Nachricht konnte nicht versendet werden.']);
     exit;
