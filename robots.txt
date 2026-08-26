@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rechtsschutzpartner24.de/sitemap.xml
