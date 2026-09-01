@@ -190,6 +190,12 @@ img{display:block;max-width:100%}
   .legal-page h1{font-size:42px}
 }
 
+@media(hover:hover) and (pointer:fine){
+  html.sword-cursor-active,html.sword-cursor-active *{cursor:none!important}
+  .sword-cursor{position:fixed;top:0;left:0;z-index:2147483647;width:32px;height:32px;pointer-events:none;background:url("assets/sword-cursor.svg") center/contain no-repeat;opacity:0;transform:translate3d(-40px,-40px,0)}
+  .sword-cursor.is-visible{opacity:1}
+}
+
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *{transition-duration:.001ms!important}
