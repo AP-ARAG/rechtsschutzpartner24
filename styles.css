@@ -107,7 +107,7 @@ img{display:block;max-width:100%}
 .bottom-cta a{padding:18px 48px;display:inline-block;border-radius:50px;background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.13);font-family:"Roboto Condensed",Arial,sans-serif;font-size:22px;line-height:33px;font-weight:700;text-decoration:none}
 .site-footer{min-height:66px;padding:20px 16px;display:flex;align-items:center;justify-content:center;gap:10px;color:#666;background:#fff;font-size:14px;text-align:center}
 .site-footer a{color:#666;text-decoration:none}
-.site-footer .webstacc-link{padding:6px 12px;border:1px solid #00ff00;border-radius:999px;color:#00ff00;background:#111;font-weight:700;text-shadow:0 0 4px #00ff00,0 0 10px #00ff00;box-shadow:0 0 6px rgba(0,255,0,.95),0 0 16px rgba(0,255,0,.8),inset 0 0 8px rgba(0,255,0,.35)}
+.site-footer .webstacc-link{color:#00ff00;font-size:13px;font-weight:600;text-shadow:0 0 2px rgba(0,255,0,.8),0 0 5px rgba(0,255,0,.45)}
 .site-footer .webstacc-link:hover,.site-footer .webstacc-link:focus-visible{text-decoration:underline}
 .site-footer button{padding:0;border:0;color:#666;background:transparent}
 .site-footer .dot{color:var(--yellow)}
