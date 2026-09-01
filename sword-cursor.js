@@ -4,14 +4,26 @@
   let animationFrame = 0;
   let pointerX = 0;
   let pointerY = 0;
+  let swordRotation = -45;
+  let hasPointerPosition = false;
 
   function paintCursor() {
     animationFrame = 0;
     if (!swordCursor) return;
-    swordCursor.style.transform = `translate3d(${pointerX - 2}px, ${pointerY - 2}px, 0)`;
+    swordCursor.style.transform = `translate3d(${pointerX - 2}px, ${pointerY - 2}px, 0) rotate(${swordRotation}deg)`;
   }
 
   function moveCursor(event) {
+    if (hasPointerPosition) {
+      const movementX = event.clientX - pointerX;
+      const movementY = event.clientY - pointerY;
+      if (Math.hypot(movementX, movementY) >= 1) {
+        const movementAngle = Math.atan2(movementY, movementX) * 180 / Math.PI;
+        swordRotation = movementAngle - 45;
+      }
+    } else {
+      hasPointerPosition = true;
+    }
     pointerX = event.clientX;
     pointerY = event.clientY;
     swordCursor?.classList.add("is-visible");
@@ -54,6 +66,7 @@
     document.documentElement.classList.remove("sword-cursor-active");
     swordCursor.remove();
     swordCursor = null;
+    hasPointerPosition = false;
     if (animationFrame) window.cancelAnimationFrame(animationFrame);
     animationFrame = 0;
   }
