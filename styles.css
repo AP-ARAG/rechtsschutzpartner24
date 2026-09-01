@@ -107,13 +107,13 @@ img{display:block;max-width:100%}
 .bottom-cta a{padding:18px 48px;display:inline-block;border-radius:50px;background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.13);font-family:"Roboto Condensed",Arial,sans-serif;font-size:22px;line-height:33px;font-weight:700;text-decoration:none}
 .site-footer{min-height:66px;padding:20px 16px;display:flex;align-items:center;justify-content:center;gap:10px;color:#666;background:#fff;font-size:14px;text-align:center}
 .site-footer a{color:#666;text-decoration:none}
-.site-footer .webstacc-link{color:#00ff00;font-size:13px;font-weight:600;text-shadow:0 0 2px rgba(0,255,0,.75),0 0 5px rgba(0,255,0,.4);animation:webstacc-glow 2.8s ease-in-out infinite;will-change:text-shadow,opacity}
+.site-footer .webstacc-link{padding:3px 8px;border-radius:999px;color:#00ff00;background:#111;font-size:14px;font-weight:700;letter-spacing:.01em;text-shadow:0 0 2px rgba(0,255,0,.8),0 0 5px rgba(0,255,0,.45);animation:webstacc-glow 2.8s ease-in-out infinite;will-change:text-shadow}
 .site-footer .webstacc-link:hover,.site-footer .webstacc-link:focus-visible{text-decoration:underline}
 .site-footer button{padding:0;border:0;color:#666;background:transparent}
 .site-footer .dot{color:var(--yellow)}
 @keyframes webstacc-glow{
-  0%,100%{opacity:.86;text-shadow:0 0 2px rgba(0,255,0,.6),0 0 4px rgba(0,255,0,.28)}
-  50%{opacity:1;text-shadow:0 0 3px rgba(0,255,0,.95),0 0 8px rgba(0,255,0,.62),0 0 12px rgba(0,255,0,.28)}
+  0%,100%{text-shadow:0 0 2px rgba(0,255,0,.65),0 0 4px rgba(0,255,0,.3)}
+  50%{text-shadow:0 0 3px rgba(0,255,0,.95),0 0 8px rgba(0,255,0,.62),0 0 12px rgba(0,255,0,.28)}
 }
 @media (prefers-reduced-motion:reduce){.site-footer .webstacc-link{animation:none}}
 
