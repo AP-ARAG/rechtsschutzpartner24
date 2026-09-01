@@ -124,8 +124,6 @@ img{display:block;max-width:100%}
   .sword-cursor.is-clicking{filter:drop-shadow(0 2px 5px rgba(0,0,0,.62)) brightness(.88)}
 }
 
-.flyby-character{position:fixed;left:0;top:0;z-index:700;width:110px;height:110px;display:block;pointer-events:none;opacity:0;filter:drop-shadow(0 7px 6px rgba(0,0,0,.3));will-change:transform,opacity}
-
 .cookie-banner{position:fixed;inset:0;z-index:999;padding:20px;place-items:center;background:rgba(0,0,0,.65)}
 .cookie-banner:not([hidden]){display:grid}
 .cookie-dialog{width:min(560px,100%);padding:30px;border-radius:16px;background:#fff;box-shadow:0 20px 70px rgba(0,0,0,.28)}
