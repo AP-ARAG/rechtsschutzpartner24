@@ -130,7 +130,7 @@ img{display:block;max-width:100%}
 .form-step-ladder::before{left:0}
 .form-step-ladder::after{right:0}
 .form-mascot-climber{position:absolute;left:50%;top:50%;width:clamp(118px,11vw,160px);transform:translate(-50%,calc(50vh + 120%)) rotate(-4deg) scale(.9);animation:mascot-climb 1.9s .62s cubic-bezier(.36,.05,.2,1) forwards}
-.form-mascot-look{transform-origin:50% 75%;animation:mascot-look 2.8s 2.7s steps(1,end) infinite}
+.form-mascot-look{transform-origin:50% 75%;animation:mascot-look 2.8s 2.7s linear infinite}
 .form-mascot-look img{width:100%;height:auto;display:block;filter:drop-shadow(0 8px 7px rgba(0,0,0,.3))}
 @keyframes ladder-rise{to{transform:translate(-50%,0)}}
 @keyframes mascot-climb{
@@ -142,9 +142,9 @@ img{display:block;max-width:100%}
   100%{transform:translate(-50%,-50%) rotate(0) scale(1)}
 }
 @keyframes mascot-look{
-  0%,42%{transform:scaleX(1) rotate(-2deg)}
-  43%,84%{transform:scaleX(-1) rotate(-2deg)}
-  85%,100%{transform:scaleX(1) rotate(-2deg)}
+  0%,41.9%{transform:scaleX(1) rotate(-2deg)}
+  42%,83.9%{transform:scaleX(-1) rotate(-2deg)}
+  84%,100%{transform:scaleX(1) rotate(-2deg)}
 }
 
 .cookie-banner{position:fixed;inset:0;z-index:999;padding:20px;place-items:center;background:rgba(0,0,0,.65)}
