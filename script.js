@@ -80,33 +80,11 @@ const formStatus = document.getElementById("formStatus");
 const stepLabel = document.getElementById("stepLabel");
 const progressBar = document.getElementById("progressBar");
 const funnelForm = document.getElementById("funnelForm");
-let formMascotScene = null;
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>'"]/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
   })[character]);
-}
-
-function syncFormMascotScene() {
-  if (currentStep !== 1) {
-    formMascotScene?.remove();
-    formMascotScene = null;
-    return;
-  }
-  if (formMascotScene) return;
-
-  formMascotScene = document.createElement("div");
-  formMascotScene.className = "form-mascot-scene";
-  formMascotScene.setAttribute("aria-hidden", "true");
-  formMascotScene.innerHTML = `
-    <div class="form-step-ladder"></div>
-    <div class="form-mascot-climber">
-      <div class="form-mascot-look">
-        <img src="assets/arcade-mascot.png" alt="" width="1221" height="1289">
-      </div>
-    </div>`;
-  document.body.appendChild(formMascotScene);
 }
 
 function renderFunnel() {
@@ -177,7 +155,6 @@ function renderFunnel() {
   });
   document.getElementById("backButton")?.addEventListener("click", goBack);
   document.getElementById("nextButton")?.addEventListener("click", goNext);
-  syncFormMascotScene();
 }
 
 function bindBirthdateFields() {
