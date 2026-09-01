@@ -66,7 +66,7 @@
         transform: `translate3d(${end.x}px,${end.y}px,0) rotate(${endRotation}deg) scale(${scale})`
       }
     ], {
-      duration: Math.round(randomBetween(720, 1120)),
+      duration: Math.round(randomBetween(2100, 2600)),
       easing: "cubic-bezier(.18,.72,.3,1)",
       fill: "none"
     });
@@ -77,7 +77,7 @@
 
   function startInterval() {
     window.clearInterval(intervalId);
-    intervalId = window.setInterval(launchCharacter, 10000);
+    intervalId = window.setInterval(launchCharacter, 3000);
   }
 
   document.addEventListener("visibilitychange", () => {
