@@ -8,7 +8,7 @@
   function paintCursor() {
     animationFrame = 0;
     if (!swordCursor) return;
-    swordCursor.style.transform = `translate3d(${pointerX - 10}px, ${pointerY - 10}px, 0)`;
+    swordCursor.style.transform = `translate3d(${pointerX - 24}px, ${pointerY - 24}px, 0)`;
   }
 
   function moveCursor(event) {
