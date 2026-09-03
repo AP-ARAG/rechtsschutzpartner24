@@ -190,15 +190,22 @@ if (!preg_match('/^[0-9]{5}$/', $data['plz'])) {
 }
 
 $birthDate = DateTimeImmutable::createFromFormat('!Y-m-d', $data['geburtsdatum']);
-if (!$birthDate || $birthDate->format('Y-m-d') !== $data['geburtsdatum'] || $birthDate >= new DateTimeImmutable('today')) {
+$latestAdultBirthDate = new DateTimeImmutable('-18 years');
+if (!$birthDate || $birthDate->format('Y-m-d') !== $data['geburtsdatum'] || $birthDate > $latestAdultBirthDate) {
     http_response_code(422);
-    echo json_encode(['ok' => false, 'message' => 'Bitte geben Sie ein gültiges Geburtsdatum an.']);
+    echo json_encode(['ok' => false, 'message' => 'Das Formular kann nur von volljährigen Personen verwendet werden. Bitte prüfen Sie Ihr Geburtsdatum.']);
     exit;
 }
 
-if (clean_value('datenschutz_einwilligung', 10) !== 'ja') {
+if (clean_value('datenschutz_bestaetigt', 10) !== 'ja') {
     http_response_code(422);
-    echo json_encode(['ok' => false, 'message' => 'Bitte bestätigen Sie die Datenschutzerklärung.']);
+    echo json_encode(['ok' => false, 'message' => 'Bitte bestätigen Sie die Kenntnisnahme der Datenschutzerklärung.']);
+    exit;
+}
+
+if (clean_value('erstinformation_digital', 10) !== 'ja') {
+    http_response_code(422);
+    echo json_encode(['ok' => false, 'message' => 'Bitte stimmen Sie der digitalen Bereitstellung der Erstinformation zu.']);
     exit;
 }
 
@@ -220,7 +227,8 @@ $lines = [
     'E-Mail: ' . $data['email'],
     'Telefon: ' . $data['telefon'],
     '',
-    'Datenschutzeinwilligung: erteilt',
+    'Datenschutzerklärung: Kenntnisnahme bestätigt',
+    'Erstinformation: digitaler Bereitstellung ausdrücklich zugestimmt',
     'Eingegangen am: ' . (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->format('d.m.Y H:i') . ' Uhr'
 ];
 

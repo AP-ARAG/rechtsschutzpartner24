@@ -9,7 +9,7 @@ const funnelSteps = [
       ["Selbstständige/r", "assets/berufsstatus/selbststaendiger.png"],
       ["Student/Schüler", "assets/berufsstatus/student.png"],
       ["Hausfrau/mann", "assets/berufsstatus/hausfrau.png"],
-      ["Renter/in", "assets/berufsstatus/rentner.png"],
+      ["Rentner/in", "assets/berufsstatus/rentner.png"],
       ["Arbeitssuchend", "assets/berufsstatus/arbeitssuchend.png"],
       ["Sonstiges", "assets/berufsstatus/sonstiges.png"]
     ]
@@ -129,7 +129,8 @@ function renderFunnel() {
     }).join("");
     if (step.submit) {
       html += '<label class="honeypot" aria-hidden="true">Bitte nicht ausfüllen<input name="website" type="text" tabindex="-1" autocomplete="off"></label>';
-      html += '<label class="consent"><input name="datenschutz_einwilligung" type="checkbox" required aria-required="true"><span><strong>Pflichtfeld:</strong> Ich habe die <a href="datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Angaben zur Bearbeitung meiner Anfrage zu. Ohne diese Einwilligung kann die Anfrage nicht abgesendet werden.</span></label>';
+      html += '<label class="consent"><input name="datenschutz_bestaetigt" type="checkbox" required aria-required="true"><span><strong>Pflichtfeld:</strong> Ich habe die <a href="datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a> zur Kenntnis genommen.</span></label>';
+      html += '<label class="consent"><input name="erstinformation_digital" type="checkbox" required aria-required="true"><span><strong>Pflichtfeld:</strong> Ich stimme ausdrücklich zu, dass mir die <a href="erstinformation.html" target="_blank" rel="noopener">Erstinformation nach § 15 VersVermV</a> über diese Website bereitgestellt wird. Ich kann sie speichern oder ausdrucken und vor dem ersten Geschäftskontakt kostenlos auf Papier anfordern.</span></label>';
     }
     html += "</div>";
   }
@@ -146,13 +147,14 @@ function renderFunnel() {
     button.addEventListener("click", () => selectOption(step, button.dataset.value));
   });
   if (step.birthdate) bindBirthdateFields();
-  const privacyCheckbox = funnelContent.querySelector('[name="datenschutz_einwilligung"]');
-  privacyCheckbox?.addEventListener("change", () => {
-    if (privacyCheckbox.checked) {
-      privacyCheckbox.closest(".consent")?.classList.remove("invalid");
+  const privacyCheckbox = funnelContent.querySelector('[name="datenschutz_bestaetigt"]');
+  const firstInfoCheckbox = funnelContent.querySelector('[name="erstinformation_digital"]');
+  [privacyCheckbox, firstInfoCheckbox].forEach((checkbox) => checkbox?.addEventListener("change", () => {
+    if (checkbox.checked) {
+      checkbox.closest(".consent")?.classList.remove("invalid");
       formStatus.textContent = "";
     }
-  });
+  }));
   document.getElementById("backButton")?.addEventListener("click", goBack);
   document.getElementById("nextButton")?.addEventListener("click", goNext);
 }
@@ -247,15 +249,17 @@ function collectBirthdate() {
   const birthDate = new Date(year, month - 1, day);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const latestAdultBirthDate = new Date(today);
+  latestAdultBirthDate.setFullYear(latestAdultBirthDate.getFullYear() - 18);
   const validDate = birthDate.getFullYear() === year
     && birthDate.getMonth() === month - 1
     && birthDate.getDate() === day
-    && birthDate < today;
+    && birthDate <= latestAdultBirthDate;
 
   if (!validDate) {
     Object.values(inputs).forEach((input) => input?.setAttribute("aria-invalid", "true"));
     inputs.day?.focus();
-    formStatus.textContent = "Bitte geben Sie ein gültiges Geburtsdatum an.";
+    formStatus.textContent = "Das Formular kann nur von volljährigen Personen verwendet werden. Bitte prüfen Sie Ihr Geburtsdatum.";
     return false;
   }
 
@@ -343,7 +347,8 @@ async function goNext() {
 
 async function submitRequest() {
   const submitButton = document.getElementById("nextButton");
-  const privacyCheckbox = funnelContent.querySelector('[name="datenschutz_einwilligung"]');
+  const privacyCheckbox = funnelContent.querySelector('[name="datenschutz_bestaetigt"]');
+  const firstInfoCheckbox = funnelContent.querySelector('[name="erstinformation_digital"]');
   const privacyLabel = privacyCheckbox?.closest(".consent");
   const honeypot = funnelContent.querySelector('[name="website"]');
   if (!privacyCheckbox?.checked) {
@@ -354,6 +359,14 @@ async function submitRequest() {
     return;
   }
   privacyLabel?.classList.remove("invalid");
+  if (!firstInfoCheckbox?.checked) {
+    firstInfoCheckbox?.closest(".consent")?.classList.add("invalid");
+    formStatus.textContent = "Bitte stimmen Sie der digitalen Bereitstellung der Erstinformation zu oder fordern Sie diese vorab auf Papier an.";
+    firstInfoCheckbox?.focus();
+    firstInfoCheckbox?.reportValidity();
+    return;
+  }
+  firstInfoCheckbox.closest(".consent")?.classList.remove("invalid");
 
   submitButton.disabled = true;
   submitButton.textContent = "Wird gesendet …";
@@ -364,7 +377,8 @@ async function submitRequest() {
     payload.append(key, Array.isArray(value) ? value.join(", ") : value);
   });
   payload.append("website", honeypot?.value || "");
-  payload.append("datenschutz_einwilligung", "ja");
+  payload.append("datenschutz_bestaetigt", "ja");
+  payload.append("erstinformation_digital", "ja");
   payload.append("started_at", String(funnelStartedAt));
 
   try {
@@ -427,12 +441,20 @@ function saveConsent(value) {
 
 function loadAnalytics() {
   if (window.gtag) return;
+  window["ga-disable-G-L0TL2D4CVW"] = false;
+  window["ga-disable-AW-18073108906"] = false;
   const script = document.createElement("script");
   script.async = true;
   script.src = "https://www.googletagmanager.com/gtag/js?id=G-L0TL2D4CVW";
   document.head.appendChild(script);
   window.dataLayer = window.dataLayer || [];
   window.gtag = function gtag(){ window.dataLayer.push(arguments); };
+  window.gtag("consent", "update", {
+    analytics_storage: "granted",
+    ad_storage: "granted",
+    ad_user_data: "granted",
+    ad_personalization: "granted"
+  });
   window.gtag("js", new Date());
   window.gtag("config", "G-L0TL2D4CVW", { anonymize_ip: true });
   window.gtag("config", "AW-18073108906");
@@ -440,6 +462,13 @@ function loadAnalytics() {
 
 function disableAnalytics() {
   window["ga-disable-G-L0TL2D4CVW"] = true;
+  window["ga-disable-AW-18073108906"] = true;
+  window.gtag?.("consent", "update", {
+    analytics_storage: "denied",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied"
+  });
   document.cookie.split(";").forEach((entry) => {
     const name = entry.split("=")[0].trim();
     if (name.startsWith("_ga") || name.startsWith("_gcl")) {
@@ -457,4 +486,5 @@ document.addEventListener("keydown", (event) => {
 
 const savedConsent = localStorage.getItem(consentKey);
 if (savedConsent === "all") loadAnalytics();
+if (savedConsent === "necessary") disableAnalytics();
 if (!savedConsent) window.setTimeout(openCookieBanner, 500);
