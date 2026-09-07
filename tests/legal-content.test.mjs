@@ -46,10 +46,10 @@ test("links every page into the V24 insurance family", async () => {
   ]);
 
   for (const page of pages) {
-    assert.match(page, /https:\/\/versicherungsnavigator24\.de/);
+    assert.match(page, /https:\/\/home-5021372330\.app-ionos\.space\//);
     assert.match(page, /https:\/\/vermieterrechtsschutz24\.com/);
-    assert.match(page, /https:\/\/tierkrankenschutz24\.de/);
-    assert.match(page, /https:\/\/privatkrankenversicherung24\.de/);
+    assert.match(page, /home-5021372330\.app-ionos\.space\/tierkrankenversicherung/);
+    assert.match(page, /home-5021372330\.app-ionos\.space\/private-krankenversicherung/);
     assert.match(page, /Zwischen Versicherungswelten wechseln/);
   }
 });
