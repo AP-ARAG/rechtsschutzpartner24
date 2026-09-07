@@ -16,6 +16,13 @@ img{display:block;max-width:100%}
 
 .topbar{min-height:41px;padding:9px 16px 8px;background:var(--yellow);font-size:14px;line-height:21px;text-align:center}
 .topbar a{text-decoration:none}
+.network-bar{min-height:42px;padding:7px clamp(16px,5vw,72px);color:#fff;background:#0b2746;display:flex;align-items:center;justify-content:space-between;gap:22px;font-size:12px}
+.network-home{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;color:#fff;font-weight:700;text-decoration:none}
+.network-home span{width:28px;height:28px;display:grid;place-items:center;border-radius:9px 9px 11px 11px;color:#0b2746;background:var(--yellow);font-size:9px;font-weight:700}
+.network-bar nav{display:flex;align-items:center;justify-content:flex-end;gap:clamp(12px,2vw,28px)}
+.network-bar nav a{color:rgba(255,255,255,.78);text-decoration:none;white-space:nowrap}
+.network-bar nav a:hover,.network-bar nav a.is-current{color:var(--yellow)}
+.network-bar nav a.is-current{font-weight:700}
 .site-header{height:90px;padding:22px 20px 0;display:flex;align-items:flex-start;justify-content:center;background:#fff}
 .brand{height:47px;padding:7px 20px 8px;display:inline-flex;align-items:center;border-radius:9px;color:#fff;background:#111;text-decoration:none;font-size:27px;line-height:32px;font-weight:500;letter-spacing:-1.1px}
 .brand span{color:var(--yellow)}
@@ -128,7 +135,7 @@ img{display:block;max-width:100%}
 .cookie-secondary{color:#000;background:#fff}
 .cookie-dialog>a{font-size:13px;text-underline-offset:3px}
 
-.legal-header{min-height:131px;background:#fff}
+.legal-header{background:#fff}
 .legal-header .topbar{width:100%}
 .legal-header-main{height:90px;padding:22px 20px 0;display:flex;align-items:flex-start;justify-content:center;position:relative}
 .legal-back{position:absolute;right:5vw;top:34px;font-size:14px;font-weight:700;text-underline-offset:3px}
@@ -141,6 +148,9 @@ img{display:block;max-width:100%}
 
 @media(max-width:760px){
   .topbar{min-height:52px;padding:8px 15px;font-size:12px;line-height:18px}
+  .network-bar{padding:9px 12px 10px;display:grid;gap:8px}
+  .network-home{width:100%;justify-content:center}
+  .network-bar nav{max-width:none;justify-content:center;flex-wrap:wrap;gap:5px 14px;line-height:1.35}
   .site-header{height:72px;padding-top:21px}
   .brand{height:35px;padding:4px 14px 5px;border-radius:8px;font-size:19px;line-height:26px;letter-spacing:-.9px}
   .offer-card{width:calc(100% - 20px);min-height:0;margin:0 10px;padding:24px 16px 39px;border-radius:20px}

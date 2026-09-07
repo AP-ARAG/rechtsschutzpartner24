@@ -36,3 +36,20 @@ test("requires adult use, privacy acknowledgement and electronic first informati
   assert.match(endpoint, /new DateTimeImmutable\('-18 years'\)/);
   assert.match(client, /ga-disable-AW-18073108906/);
 });
+
+test("links every page into the V24 insurance family", async () => {
+  const pages = await Promise.all([
+    read("index.html"),
+    read("impressum.html"),
+    read("erstinformation.html"),
+    read("datenschutz.html"),
+  ]);
+
+  for (const page of pages) {
+    assert.match(page, /https:\/\/versicherungsnavigator24\.de/);
+    assert.match(page, /https:\/\/vermieterrechtsschutz24\.com/);
+    assert.match(page, /https:\/\/tierkrankenschutz24\.de/);
+    assert.match(page, /https:\/\/privatkrankenversicherung24\.de/);
+    assert.match(page, /Zwischen Versicherungswelten wechseln/);
+  }
+});
