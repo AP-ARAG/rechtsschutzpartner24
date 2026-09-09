@@ -24,8 +24,8 @@ export const siteUrl = (process.env.SITE_URL || "https://versicherungsnavigator2
 export const productLinks = [
   { label: "Rechtsschutz", title: "RechtsschutzPartner24", href: "https://rechtsschutzpartner24.de" },
   { label: "Vermieter", title: "Vermieterrechtsschutz24", href: "https://vermieterrechtsschutz24.com" },
-  { label: "Tier", title: "Tierkrankenschutz24", href: "/tierkrankenversicherung/" },
-  { label: "Private KV", title: "PrivatKrankenversicherung24", href: "/private-krankenversicherung/" },
+  { label: "Tier", title: "Tierkrankenschutz24", href: "https://home-5021386515.app-ionos.space/" },
+  { label: "Private KV", title: "PrivatKrankenversicherung24", href: "https://home-5021386578.app-ionos.space/" },
 ] as const;
 
 export const domainRecommendations = {

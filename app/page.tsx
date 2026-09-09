@@ -21,14 +21,14 @@ const products = [
     eyebrow: "Tiergesundheit",
     title: "Tierkrankenschutz24",
     description: "Kranken- und OP-Schutz für Hunde und Katzen – verständlich erklärt.",
-    href: "/tierkrankenversicherung/",
+    href: "https://home-5021386515.app-ionos.space/",
     action: "Tier-Schutz entdecken",
   },
   {
     eyebrow: "Gesundheit",
     title: "PrivatKrankenversicherung24",
     description: "Private Krankenversicherung passend zu Beruf, Familie und Anspruch.",
-    href: "/private-krankenversicherung/",
+    href: "https://home-5021386578.app-ionos.space/",
     action: "Privat-Schutz entdecken",
   },
 ];

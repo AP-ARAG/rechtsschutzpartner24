@@ -20,6 +20,8 @@ test("connects the four insurance worlds through one shared system", async () =>
   }
   assert.match(chrome, /Zur Hauptseite/);
   assert.match(chrome, /Zwischen Versicherungswelten|Versicherungsbereiche/);
+  assert.match(data, /home-5021386515\.app-ionos\.space/);
+  assert.match(data, /home-5021386578\.app-ionos\.space/);
 });
 
 test("ships SEO, legal, privacy and product-detail foundations", async () => {
