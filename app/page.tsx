@@ -35,7 +35,7 @@ const products = [
 
 const faqs = [
   ["Ist Versicherungsnavigator24 ein Versicherungsvergleich?", "Nein. Die Plattform bündelt spezialisierte Informations- und Beratungsseiten eines gebundenen Versicherungsvertreters der ARAG. Es findet kein unabhängiger Marktvergleich statt."],
-  ["Kann ich zwischen den Versicherungsseiten wechseln?", "Ja. Jede Seite enthält denselben Produktwechsler und einen direkten Link zurück zur zentralen Übersicht. So erreichen Sie alle vier Themen ohne Umwege."],
+  ["Kann ich zwischen den Versicherungsseiten wechseln?", "Ja. Jede Seite enthält dasselbe Hauptmenü und einen direkten Link zurück zur zentralen Übersicht. So erreichen Sie alle vier Themen ohne Umwege."],
   ["Ist die Beratung kostenlos?", "Für die dargestellte Versicherungsvermittlung wird keine unmittelbar vom Kunden zu zahlende Vergütung erhoben. Die Vergütung besteht aus einer in der Versicherungsprämie enthaltenen Provision."],
   ["Kann ich mich erst unverbindlich informieren?", "Ja. Alle Seiten erklären die wichtigsten Auswahlkriterien. Die Bedarfschecks speichern oder übertragen keine Angaben; erst Sie entscheiden, ob Sie anschließend anrufen oder eine E-Mail senden."],
 ] as const;
@@ -95,7 +95,7 @@ export default function Home() {
           <div className="section-heading">
             <p className="eyebrow">Unsere Schutzwelten</p>
             <h2 id="products-title">Womit dürfen wir Ihnen helfen?</h2>
-            <p>Jede Seite ist auf ein Thema spezialisiert. Über den gemeinsamen Produktwechsler kommen Sie jederzeit hierher zurück oder direkt zur nächsten Lösung.</p>
+            <p>Jede Seite ist auf ein Thema spezialisiert. Über das gemeinsame Hauptmenü kommen Sie jederzeit hierher zurück oder direkt zur nächsten Lösung.</p>
           </div>
           <div className="product-grid">
             {products.map((product, index) => (

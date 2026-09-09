@@ -38,8 +38,8 @@ test("ships SEO, legal, privacy and product-detail foundations", async () => {
 
   assert.match(layout, /metadataBase/);
   assert.match(layout, /openGraph/);
-  assert.match(sitemap, /tierkrankenversicherung/);
-  assert.match(sitemap, /private-krankenversicherung/);
+  assert.doesNotMatch(sitemap, /tierkrankenversicherung/);
+  assert.doesNotMatch(sitemap, /private-krankenversicherung/);
   assert.match(robots, /sitemap/);
   assert.match(pet, /4-fachen GOT-Satz/);
   assert.match(pet, /offiziellen ARAG|arag\.de\/tierversicherung/);
@@ -81,7 +81,8 @@ test("produces a standalone IONOS PHP artifact with extensionless routes", async
     assert.match(manifest, new RegExp(`"${route === "/" ? "\\/" : route}"`));
   }
   assert.match(robots, /Sitemap: https:\/\//);
-  assert.match(sitemap, /<loc>.*\/tierkrankenversicherung\/<\/loc>/);
+  assert.doesNotMatch(sitemap, /<loc>.*\/tierkrankenversicherung\/<\/loc>/);
+  assert.match(htaccess, /RewriteRule \^tierkrankenversicherung/);
   assert.match(htaccess, /RewriteRule \^\(\.\+\?\)\/\?\$ \$1\.html \[L\]/);
   assert.match(htaccess, /DirectoryIndex index\.html index\.php/);
   assert.doesNotMatch(htaccess, /X-Frame-Options|frame-ancestors/);

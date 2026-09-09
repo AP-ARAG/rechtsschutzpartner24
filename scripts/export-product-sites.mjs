@@ -1,12 +1,13 @@
-import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const sourceRoot = resolve(projectRoot, "dist/client");
-const sitesRoot = resolve(projectRoot, "..");
-const hubUrl = (process.env.HUB_URL || "https://home-5021372330.app-ionos.space").replace(/\/$/, "");
+const sitesRoot = process.env.SITES_ROOT ? resolve(process.env.SITES_ROOT) : resolve(projectRoot, "..");
+const hubUrl = (process.env.HUB_URL || "https://home-5021386814.app-ionos.space").replace(/\/$/, "");
+const petSiteUrl = (process.env.PET_SITE_URL || "https://home-5021386515.app-ionos.space").replace(/\/$/, "");
+const pkvSiteUrl = (process.env.PKV_SITE_URL || "https://home-5021386578.app-ionos.space").replace(/\/$/, "");
 const deploymentUrl = "https://IONOS_DEPLOY_NOW_SITE_URL";
 const sourceSiteUrl = "https://versicherungsnavigator24.vertrieb180843.chatgpt.site";
 
@@ -16,7 +17,10 @@ const sites = [
     directory: "tierkrankenschutz24-static",
     sourceRoute: "tierkrankenversicherung",
     title: "Tierkrankenschutz24",
-    otherProductUrl: `${hubUrl}/private-krankenversicherung/`,
+    subtitle: "ARAG Tierkranken- und OP-Schutz persönlich eingeordnet",
+    mark: "T24",
+    liveUrl: petSiteUrl,
+    otherProductUrl: pkvSiteUrl,
     hero: "tierkrankenschutz24-hero.webp",
   },
   {
@@ -24,7 +28,10 @@ const sites = [
     directory: "privatkrankenversicherung24-static",
     sourceRoute: "private-krankenversicherung",
     title: "PrivatKrankenversicherung24",
-    otherProductUrl: `${hubUrl}/tierkrankenversicherung/`,
+    subtitle: "ARAG private Krankenversicherung persönlich eingeordnet",
+    mark: "P24",
+    liveUrl: pkvSiteUrl,
+    otherProductUrl: petSiteUrl,
     hero: "privatkrankenversicherung24-hero.webp",
   },
 ];
@@ -36,7 +43,7 @@ const rewriteDocument = (html, site, route = "") => {
   const otherProduct = site.id === "pet" ? "private-krankenversicherung" : "tierkrankenversicherung";
   const canonicalPath = route ? `/${route}/` : "/";
 
-  return html
+  let rewritten = html
     .replace("<body>", `<body data-product-site="${site.id}">`)
     .replace(/<link\b[^>]*\brel=(?:"|')stylesheet(?:"|')[^>]*>/i, '<link rel="stylesheet" href="/styles.css">')
     .replaceAll(`${sourceSiteUrl}/${site.sourceRoute}/`, `${deploymentUrl}${canonicalPath}`)
@@ -44,7 +51,25 @@ const rewriteDocument = (html, site, route = "") => {
     .replace(/href="\/"/g, `href="${hubUrl}/"`)
     .replace(new RegExp(`href="/${selfProduct}/?"`, "g"), 'href="/"')
     .replace(new RegExp(`href="/${otherProduct}/?"`, "g"), `href="${site.otherProductUrl}"`)
+    .replaceAll(`href="${site.liveUrl}/"`, 'href="/"')
+    .replaceAll(">Versicherungsnavigator24</strong>", `>${site.title}</strong>`)
+    .replaceAll("Versicherungsnavigator24 Startseite", `${site.title} Startseite`)
+    .replaceAll("ARAG Hauptgeschäftsstelle Augsburg · Vier starke Lösungen", site.subtitle)
+    .replace(/(<span class="brand-mark"[^>]*>)V24(<\/span>)/g, `$1${site.mark}$2`)
+    .replaceAll(`href="${hubUrl}/" class="brand-link" aria-label="${site.title} Startseite"`, `href="/" class="brand-link" aria-label="${site.title} Startseite"`)
+    .replaceAll(`href="${hubUrl}/" class="footer-brand"`, 'href="/" class="footer-brand"')
     .replace("</body>", `${route ? "" : '<script defer src="/consultation.js"></script>'}</body>`);
+
+  if (route && route !== "404") {
+    rewritten = rewritten
+      .replaceAll(` | Versicherungsnavigator24</title>`, ` | ${site.title}</title>`)
+      .replace('<meta name="robots" content="index, follow"/>', '<meta name="robots" content="noindex, follow"/>')
+      .replace('<meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1"/>', '<meta name="googlebot" content="noindex, follow"/>')
+      .replaceAll('content="Versicherungsnavigator24"', `content="${site.title}"`)
+      .replaceAll("zu Versicherungsnavigator24.", `zu ${site.title}.`);
+  }
+
+  return rewritten;
 };
 
 const consultationScript = `(() => {
@@ -143,15 +168,15 @@ for (const site of sites) {
     await writeFile(resolve(target, route, "index.html"), legalHtml);
   }
 
-  await writeFile(resolve(target, "404.html"), rewriteDocument(await readFile(resolve(sourceRoot, "404.html"), "utf8"), site));
+  await writeFile(resolve(target, "404.html"), rewriteDocument(await readFile(resolve(sourceRoot, "404.html"), "utf8"), site, "404"));
   for (const asset of ["agapios-papadakis.jpg", site.hero, "og.png", "favicon.svg"]) {
-    const content = execFileSync("git", ["-C", projectRoot, "show", `HEAD:public/${asset}`], { maxBuffer: 10_000_000 });
+    const content = await readFile(resolve(projectRoot, "public", asset));
     await writeFile(resolve(target, asset), content);
   }
   await writeFile(resolve(target, "consultation.js"), consultationScript);
   await writeFile(resolve(target, ".htaccess"), htaccess);
   await writeFile(resolve(target, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${deploymentUrl}/sitemap.xml\n`);
-  await writeFile(resolve(target, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${["/", ...legalRoutes.map((route) => `/${route}/`)].map((route) => `  <url><loc>${deploymentUrl}${route}</loc></url>`).join("\n")}\n</urlset>\n`);
+  await writeFile(resolve(target, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${deploymentUrl}/</loc></url>\n</urlset>\n`);
   await writeFile(resolve(target, "README.md"), `# ${site.title}\n\nEigenständige statische IONOS-Deploy-Now-Website. Es ist kein PHP- oder Node-Server erforderlich.\n\n- Projekttyp: Static\n- Build-Befehl: leer\n- Veröffentlichungsordner: Repository-Stammverzeichnis (.)\n`);
   await writeFile(resolve(target, ".gitignore"), ".DS_Store\n");
 }

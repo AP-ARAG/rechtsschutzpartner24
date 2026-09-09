@@ -1,7 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 import { ConsultationCheck } from "./ConsultationCheck";
-import { AdvisorSection, ProductSwitcher, SiteFooter, SiteHeader } from "./SiteChrome";
+import { AdvisorSection, SiteFooter, SiteHeader } from "./SiteChrome";
 import { StructuredData } from "./StructuredData";
 import { operator, siteUrl } from "../site-data";
 
@@ -49,15 +48,23 @@ export function ProductLanding({ config }: { config: ProductConfig }) {
             addressCountry: "DE",
           },
         },
+        {
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: config.title,
+          serviceType: config.kind === "pet" ? "Tierkrankenversicherung" : "Private Krankenversicherung",
+          provider: { "@type": "InsuranceAgency", name: operator.office },
+          areaServed: { "@type": "Country", name: "Deutschland" },
+          url: siteUrl,
+        },
         { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqData },
       ]} />
       <SiteHeader active={config.active} compact />
       <main id="main">
-        <section className={`product-hero product-hero-${config.kind}`}>
+        <section className={`product-hero product-hero-${config.kind}`} aria-labelledby="product-title">
           <div className="product-hero-copy">
-            <Link className="back-home-link hero-back" href="/">← Alle Versicherungswelten</Link>
             <p className="eyebrow">{config.eyebrow}</p>
-            <h1>{config.title}</h1>
+            <h1 id="product-title">{config.title}</h1>
             <p className="hero-lead">{config.lead}</p>
             <div className="hero-actions">
               <a className="button button-primary" href="#bedarfscheck">Bedarf kurz einordnen</a>
@@ -151,10 +158,9 @@ export function ProductLanding({ config }: { config: ProductConfig }) {
           </div>
         </section>
 
-        <ProductSwitcher active={config.active} />
         <AdvisorSection />
       </main>
-      <SiteFooter />
+      <SiteFooter active={config.active} />
     </>
   );
 }

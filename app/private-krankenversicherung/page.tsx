@@ -10,8 +10,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "PrivatKrankenversicherung24 | Gesundheitsschutz persönlich erklärt",
     description: "ARAG PKV-Leistungen verständlich einordnen und persönlich beraten lassen.",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Versicherungsnavigator24 – Recht, Wohnen, Tier und Gesundheit" }],
+    url: "/private-krankenversicherung/",
+    siteName: "PrivatKrankenversicherung24",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "PrivatKrankenversicherung24 – private ARAG Krankenversicherung" }],
   },
+  twitter: { card: "summary_large_image", title: "PrivatKrankenversicherung24", description: "Private ARAG Krankenversicherung verständlich eingeordnet.", images: ["/og.png"] },
 };
 
 const config: ProductConfig = {

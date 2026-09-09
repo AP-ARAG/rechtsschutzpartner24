@@ -10,8 +10,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Tierkrankenschutz24 | Kranken- und OP-Schutz für Hund & Katze",
     description: "Tierarztkosten verständlich absichern – mit persönlicher ARAG Beratung.",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Versicherungsnavigator24 – Recht, Wohnen, Tier und Gesundheit" }],
+    url: "/tierkrankenversicherung/",
+    siteName: "Tierkrankenschutz24",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tierkrankenschutz24 – ARAG Tierkrankenversicherung für Hund und Katze" }],
   },
+  twitter: { card: "summary_large_image", title: "Tierkrankenschutz24", description: "ARAG Tierkranken- und OP-Schutz verständlich erklärt.", images: ["/og.png"] },
 };
 
 const config: ProductConfig = {

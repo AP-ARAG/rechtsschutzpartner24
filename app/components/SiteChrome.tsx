@@ -7,53 +7,62 @@ type HeaderProps = {
   compact?: boolean;
 };
 
+const pageBrand = {
+  hub: {
+    name: "Versicherungsnavigator24",
+    subtitle: "ARAG Hauptgeschäftsstelle Augsburg · Vier starke Lösungen",
+    href: "/",
+  },
+  legal: {
+    name: "Versicherungsnavigator24",
+    subtitle: "ARAG Hauptgeschäftsstelle Augsburg · Vier starke Lösungen",
+    href: "/",
+  },
+  pet: {
+    name: "Tierkrankenschutz24",
+    subtitle: "ARAG Tierkranken- und OP-Schutz persönlich eingeordnet",
+    href: "/tierkrankenversicherung/",
+  },
+  pkv: {
+    name: "PrivatKrankenversicherung24",
+    subtitle: "ARAG private Krankenversicherung persönlich eingeordnet",
+    href: "/private-krankenversicherung/",
+  },
+} as const;
+
 export function SiteHeader({ active = "hub", compact = false }: HeaderProps) {
+  const brand = pageBrand[active];
+
   return (
     <>
       <a className="skip-link" href="#main">Zum Inhalt springen</a>
-      <div className="topline">
-        <p>{operator.office} · Persönlich für Sie da</p>
-        <div><a href={`tel:${operator.phoneHref}`}>{operator.phoneDisplay}</a><span aria-hidden="true"> · </span><a href={`mailto:${operator.email}`}>E-Mail</a></div>
-      </div>
-      <header className={`site-header ${compact ? "site-header-compact" : ""}`}>
-        <Link className="brand" href="/" aria-label="Versicherungsnavigator24 Startseite">
-          <span className="brand-mark" aria-hidden="true">V24</span>
-          <span><strong>Versicherungsnavigator24</strong><small>Ein Ansprechpartner. Vier starke Lösungen.</small></span>
+      <aside className="network-bar" aria-label="Versicherungsnavigator24">
+        <Link className="network-home" href="/" aria-label="Zur Hauptseite Versicherungsnavigator24">
+          <span aria-hidden="true">V24</span><strong>Zur Hauptseite</strong>
         </Link>
-        <nav className="desktop-nav" aria-label="Versicherungsbereiche">
-          <Link className={active === "hub" ? "is-active" : ""} href="/">Übersicht</Link>
+        <nav className="desktop-nav" aria-label="Zwischen Versicherungswelten wechseln">
           {productLinks.map((product) => (
-            <Link className={(active === "pet" && product.label === "Tier") || (active === "pkv" && product.label === "Private KV") ? "is-active" : ""} href={product.href} key={product.title}>{product.label}</Link>
+            <Link className={(active === "pet" && product.label === "Tier") || (active === "pkv" && product.label === "Private KV") ? "is-current" : ""} href={product.href} key={product.title}>{product.label}</Link>
           ))}
         </nav>
         <details className="mobile-menu">
           <summary aria-label="Navigation öffnen">Menü</summary>
           <nav aria-label="Mobile Versicherungsbereiche">
-            <Link href="/">Übersicht</Link>
+            <Link href="/">Zur Hauptseite</Link>
             {productLinks.map((product) => <Link href={product.href} key={product.title}>{product.title}</Link>)}
           </nav>
         </details>
+      </aside>
+      <header className={`site-header ${compact ? "site-header-compact" : ""}`}>
+        <div className="header-inner">
+          <Link className="brand-link" href={brand.href} aria-label={`${brand.name} Startseite`}>
+            <span className="brand-mark" aria-hidden="true">ARAG</span>
+            <span className="brand-copy"><strong>{brand.name}</strong><small>{brand.subtitle}</small></span>
+          </Link>
+          <a className="outline-button" href={`tel:${operator.phoneHref}`}>Jetzt Rückruf anfordern</a>
+        </div>
       </header>
     </>
-  );
-}
-
-export function ProductSwitcher({ active }: { active?: "pet" | "pkv" }) {
-  return (
-    <section className="switcher" aria-labelledby="switcher-title">
-      <div className="switcher-intro">
-        <p className="eyebrow">Ein System · vier Themen</p>
-        <h2 id="switcher-title">Direkt zur passenden Versicherungswelt</h2>
-      </div>
-      <div className="switcher-links">
-        {productLinks.map((product) => (
-          <Link className={(active === "pet" && product.label === "Tier") || (active === "pkv" && product.label === "Private KV") ? "is-current" : ""} href={product.href} key={product.title}>
-            <span>{product.label}</span><strong>{product.title}</strong>
-          </Link>
-        ))}
-      </div>
-      <Link className="back-home-link" href="/">← Zur Hauptseite</Link>
-    </section>
   );
 }
 
@@ -81,12 +90,15 @@ export function AdvisorSection() {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({ active = "hub" }: { active?: HeaderProps["active"] }) {
+  const brand = pageBrand[active];
+  const mark = active === "pet" ? "T24" : active === "pkv" ? "P24" : "V24";
+
   return (
     <footer className="site-footer">
       <div className="footer-grid">
         <div>
-          <Link className="footer-brand" href="/"><span className="brand-mark" aria-hidden="true">V24</span><span><strong>Versicherungsnavigator24</strong><small>Persönliche ARAG Beratung</small></span></Link>
+          <Link className="footer-brand" href={brand.href}><span className="brand-mark" aria-hidden="true">{mark}</span><span><strong>{brand.name}</strong><small>Persönliche ARAG Beratung</small></span></Link>
           <p>Vier spezialisierte Wege zu Ihrem Versicherungsschutz – mit einem persönlichen Ansprechpartner.</p>
         </div>
         <div>

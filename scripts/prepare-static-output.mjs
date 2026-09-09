@@ -2,6 +2,8 @@ import { copyFile, mkdir, readFile, readdir, writeFile } from "node:fs/promises"
 
 const outputDirectory = new URL("../dist/client/", import.meta.url);
 const siteUrl = (process.env.SITE_URL || "https://versicherungsnavigator24.vertrieb180843.chatgpt.site").replace(/\/$/, "");
+const petSiteUrl = "https://home-5021386515.app-ionos.space/";
+const pkvSiteUrl = "https://home-5021386578.app-ionos.space/";
 const routes = [
   ["/", "weekly", "1.0"],
   ["/tierkrankenversicherung/", "monthly", "0.9"],
@@ -10,11 +12,12 @@ const routes = [
   ["/erstinformation/", "yearly", "0.2"],
   ["/datenschutz/", "yearly", "0.2"],
 ];
+const sitemapRoutes = routes.filter(([route]) => !["/tierkrankenversicherung/", "/private-krankenversicherung/"].includes(route));
 
 const escapeXml = (value) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${routes.map(([route, frequency, priority]) => `  <url>
+${sitemapRoutes.map(([route, frequency, priority]) => `  <url>
     <loc>${escapeXml(`${siteUrl}${route}`)}</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>${frequency}</changefreq>
@@ -30,7 +33,7 @@ Sitemap: ${siteUrl}/sitemap.xml
 `;
 
 const htaccess = `Options -Indexes
-DirectoryIndex index.php index.html
+DirectoryIndex index.html index.php
 ErrorDocument 404 /404.html
 
 <IfModule mod_negotiation.c>
@@ -39,6 +42,8 @@ ErrorDocument 404 /404.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  RewriteRule ^tierkrankenversicherung/?$ ${petSiteUrl} [R=301,L]
+  RewriteRule ^private-krankenversicherung/?$ ${pkvSiteUrl} [R=301,L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{DOCUMENT_ROOT}/$1.html -f
