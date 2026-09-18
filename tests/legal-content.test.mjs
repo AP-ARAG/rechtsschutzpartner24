@@ -61,7 +61,7 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
     stat(new URL("hero-home.jpg", root)),
   ]);
 
-  assert.match(home, /Hauptgeschäftsstelle Augsburg/);
+  assert.match(home, /Hauptgeschäftsstelle ARAG/);
   assert.match(home, /class="offer-hero"/);
   assert.match(styles, /\.site-header\{min-height:82px/);
   assert.match(styles, /\.offer-hero\{min-height:680px;padding:clamp\(34px,5vw,64px\) clamp\(16px,4vw,56px\)/);
