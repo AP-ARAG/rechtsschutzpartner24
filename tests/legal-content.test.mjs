@@ -63,6 +63,7 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   ]);
 
   assert.match(home, /Hauptgeschäftsstelle ARAG/);
+  assert.doesNotMatch(home, /brand-mark[^>]*>ARAG/);
   assert.doesNotMatch(home, /ARAG Rechtsschutz persönlich und verständlich beraten/);
   assert.match(home, /class="offer-hero"/);
   assert.match(styles, /\.site-header\{min-height:82px/);
