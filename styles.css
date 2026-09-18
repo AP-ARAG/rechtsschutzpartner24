@@ -14,9 +14,9 @@ img{display:block;max-width:100%}
 .skip-link{position:fixed;left:16px;top:-80px;z-index:1000;padding:10px 16px;color:#fff;background:#000}
 .skip-link:focus{top:12px}
 
-.network-bar{min-height:48px;padding:6px clamp(18px,4.3vw,88px);color:#fff;background:#050505;display:flex;align-items:center;justify-content:space-between;gap:24px;font-size:13px}
+.network-bar{min-height:48px;padding:6px clamp(18px,4.3vw,88px);color:#fff;background:#000000;display:flex;align-items:center;justify-content:space-between;gap:24px;font-size:13px}
 .network-home{flex:0 0 auto;display:inline-flex;align-items:center;gap:10px;color:#fff;font-weight:850;text-decoration:none}
-.network-home span{width:38px;aspect-ratio:1;display:grid;place-items:center;border-radius:11px 11px 14px 14px;color:#050505;background:var(--yellow);font-size:10px;font-weight:900;box-shadow:0 5px 18px rgba(248,211,44,.2)}
+.network-home span{width:38px;aspect-ratio:1;display:grid;place-items:center;border-radius:11px 11px 14px 14px;color:#000000;background:var(--yellow);font-size:10px;font-weight:900;box-shadow:0 5px 18px rgba(248,211,44,.2)}
 .network-home strong{font-size:13px}
 .desktop-nav{display:flex;align-items:center;justify-content:flex-end;gap:clamp(16px,2.5vw,38px)}
 .desktop-nav a{padding:8px 0;color:rgba(255,255,255,.68);text-decoration:none;font-size:13px;font-weight:650;white-space:nowrap;transition:color .18s ease,transform .18s ease}
@@ -27,15 +27,15 @@ img{display:block;max-width:100%}
 .mobile-menu summary::-webkit-details-marker{display:none}
 .mobile-menu nav{position:absolute;z-index:60;right:0;top:calc(100% + 10px);width:min(340px,calc(100vw - 24px));padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:18px;color:#fff;background:#111;box-shadow:0 22px 56px rgba(0,0,0,.32);display:grid}
 .mobile-menu nav a{padding:12px 13px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:750;overflow-wrap:anywhere}
-.mobile-menu nav a:hover{color:#050505;background:var(--yellow)}
-.site-header{min-height:82px;color:#050505;background:var(--yellow)}
+.mobile-menu nav a:hover{color:#000000;background:var(--yellow)}
+.site-header{min-height:82px;color:#000000;background:var(--yellow)}
 .header-inner{width:min(100%,1740px);min-height:inherit;margin:0 auto;padding:8px clamp(18px,7.5vw,152px);display:flex;align-items:center;justify-content:space-between;gap:22px}
-.brand-link{min-width:0;display:inline-flex;align-items:center;gap:13px;color:#050505;text-decoration:none}
-.brand-mark{flex:0 0 auto;width:50px;aspect-ratio:1;display:grid;place-items:center;border:2px solid #050505;border-radius:16px 16px 20px 20px;color:#050505;background:#fff;box-shadow:0 6px 15px rgba(0,0,0,.13);font-size:11px;font-weight:900;letter-spacing:-.06em}
+.brand-link{min-width:0;display:inline-flex;align-items:center;gap:13px;color:#000000;text-decoration:none}
+.brand-mark{flex:0 0 auto;width:50px;aspect-ratio:1;display:grid;place-items:center;border:2px solid #000000;border-radius:16px 16px 20px 20px;color:#000000;background:#fff;box-shadow:0 6px 15px rgba(0,0,0,.13);font-size:11px;font-weight:900;letter-spacing:-.06em}
 .brand-copy{min-width:0;display:grid}
 .brand-copy strong{font-size:clamp(18px,2vw,26px);line-height:1.02;letter-spacing:-.032em;overflow-wrap:anywhere}
 .brand-copy small{margin-top:3px;font-size:clamp(10px,.95vw,13px);line-height:1.15}
-.outline-button{position:relative;flex:0 0 auto;min-height:48px;padding:10px clamp(20px,2.6vw,32px);overflow:hidden;display:inline-flex;align-items:center;justify-content:center;border:2px solid #050505;border-radius:999px;color:#fff;background:#050505;box-shadow:0 10px 24px rgba(0,0,0,.22);text-decoration:none;text-align:center;font-size:clamp(12px,1vw,15px);font-weight:900;transition:transform .25s ease,box-shadow .25s ease}
+.outline-button{position:relative;flex:0 0 auto;min-height:48px;padding:10px clamp(20px,2.6vw,32px);overflow:hidden;display:inline-flex;align-items:center;justify-content:center;border:2px solid #000000;border-radius:999px;color:#fff;background:#000000;box-shadow:0 10px 24px rgba(0,0,0,.22);text-decoration:none;text-align:center;font-size:clamp(12px,1vw,15px);font-weight:900;transition:transform .25s ease,box-shadow .25s ease}
 .outline-button:after{content:"";position:absolute;inset:-2px auto -2px -40%;width:28%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-18deg);transition:left .55s ease}
 .outline-button:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(0,0,0,.28)}
 .outline-button:hover:after{left:118%}
