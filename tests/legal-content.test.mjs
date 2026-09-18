@@ -15,9 +15,9 @@ test("publishes complete provider and intermediary information", async () => {
   for (const document of [imprint, firstInformation]) {
     assert.match(document, /Agapios Papadakis/);
     assert.match(document, /D-05V5-SZ9YK-16/);
-    assert.match(document, /Buchenbergstr\. 3f/);
-    assert.match(document, /86420 Diedorf/);
     assert.match(document, /Wankelstraße 2/);
+    assert.match(document, /86356 Neusäß/);
+    assert.doesNotMatch(document, /Buchenbergstr\. 3f|86420 Diedorf/);
     assert.match(document, /0800 3696000/);
   }
   assert.match(firstInformation, /Beratung, Produktangebot und Vergütung/);
