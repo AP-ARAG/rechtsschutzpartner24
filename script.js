@@ -40,8 +40,7 @@ const funnelSteps = [
   },
   {
     key: "anschrift",
-    question: "Wir haben passende Angebote für Sie gefunden",
-    subline: "Angaben zu Ihrem Wohnort",
+    question: "Ihre Anschrift",
     fields: [
       ["vorname", "Vorname", "text", "given-name"],
       ["nachname", "Nachname", "text", "family-name"],
@@ -54,13 +53,11 @@ const funnelSteps = [
   {
     key: "geburt",
     question: "Wann sind Sie geboren?",
-    subline: "Angaben zu Ihrem Geburtsdatum",
     birthdate: true
   },
   {
     key: "kontakt",
-    question: "Fast geschafft",
-    subline: "Wie können wir Sie am besten erreichen?",
+    question: "Kontaktdaten",
     fields: [
       ["email", "E-Mail-Adresse", "email", "email"],
       ["telefon", "Telefonnummer", "tel", "tel"]
@@ -129,8 +126,8 @@ function renderFunnel() {
     }).join("");
     if (step.submit) {
       html += '<label class="honeypot" aria-hidden="true">Bitte nicht ausfüllen<input name="website" type="text" tabindex="-1" autocomplete="off"></label>';
-      html += '<label class="consent"><input name="datenschutz_bestaetigt" type="checkbox" required aria-required="true"><span><strong>Pflichtfeld:</strong> Ich habe die <a href="datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a> zur Kenntnis genommen.</span></label>';
-      html += '<label class="consent"><input name="erstinformation_digital" type="checkbox" required aria-required="true"><span><strong>Pflichtfeld:</strong> Ich stimme ausdrücklich zu, dass mir die <a href="erstinformation.html" target="_blank" rel="noopener">Erstinformation nach § 15 VersVermV</a> über diese Website bereitgestellt wird. Ich kann sie speichern oder ausdrucken und vor dem ersten Geschäftskontakt kostenlos auf Papier anfordern.</span></label>';
+      html += '<label class="consent"><input name="datenschutz_bestaetigt" type="checkbox" required aria-required="true"><span><a href="datenschutz.html" target="_blank" rel="noopener">Datenschutz</a> zur Kenntnis genommen.</span></label>';
+      html += '<label class="consent"><input name="erstinformation_digital" type="checkbox" required aria-required="true"><span>Digitaler <a href="erstinformation.html" target="_blank" rel="noopener">Erstinformation</a> ausdrücklich zugestimmt.</span></label>';
     }
     html += "</div>";
   }
@@ -140,7 +137,7 @@ function renderFunnel() {
   if (currentStep > 0) {
     funnelActions.insertAdjacentHTML("beforeend", '<button class="funnel-button secondary" type="button" id="backButton">‹ Zurück</button>');
   }
-  const label = step.submit ? "Anfrage absenden ›" : "Weiter ›";
+  const label = step.submit ? "Anfrage senden ›" : "Weiter ›";
   funnelActions.insertAdjacentHTML("beforeend", `<button class="funnel-button primary" type="button" id="nextButton">${label}</button>`);
 
   funnelContent.querySelectorAll(".option").forEach((button) => {
@@ -353,7 +350,7 @@ async function submitRequest() {
   const honeypot = funnelContent.querySelector('[name="website"]');
   if (!privacyCheckbox?.checked) {
     privacyLabel?.classList.add("invalid");
-    formStatus.textContent = "Bitte bestätigen Sie die Datenschutzerklärung, um die Anfrage abzusenden.";
+    formStatus.textContent = "Bitte Datenschutz bestätigen.";
     privacyCheckbox?.focus();
     privacyCheckbox?.reportValidity();
     return;
