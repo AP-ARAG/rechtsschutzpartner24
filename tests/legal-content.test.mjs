@@ -69,7 +69,22 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   assert.match(styles, /\.site-header\{min-height:82px/);
   assert.match(styles, /\.offer-hero\{min-height:680px;padding:clamp\(34px,5vw,64px\) clamp\(16px,4vw,56px\)/);
   assert.match(styles, /url\("hero-home\.jpg"\)/);
-  assert.match(home, /20260918-compact-form-v4/);
+  assert.match(home, /20260918-advisor-v5/);
   assert.match(cacheRules, /no-cache, no-store, must-revalidate/);
   assert.ok(heroImage.size > 0);
+});
+
+test("uses the shared Vermieter-style advisor portrait layout", async () => {
+  const [home, styles, portrait] = await Promise.all([
+    read("index.html"),
+    read("styles.css"),
+    stat(new URL("agapios-papadakis.jpg", root)),
+  ]);
+
+  assert.match(home, /class="advisor-portrait"/);
+  assert.match(home, /Persönlich beraten von Agapios Papadakis/);
+  assert.match(home, /Offizielles Vermittlerprofil/);
+  assert.match(styles, /\.advisor-portrait img\{[^}]*aspect-ratio:4\/3/);
+  assert.match(styles, /grid-template-columns:minmax\(280px,390px\) minmax\(360px,1fr\)/);
+  assert.ok(portrait.size > 10_000);
 });
