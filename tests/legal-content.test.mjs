@@ -55,9 +55,10 @@ test("links every page into the V24 insurance family", async () => {
 });
 
 test("matches the compact shared header and Vermieter hero spacing", async () => {
-  const [home, styles, heroImage] = await Promise.all([
+  const [home, styles, cacheRules, heroImage] = await Promise.all([
     read("index.html"),
     read("styles.css"),
+    read(".htaccess"),
     stat(new URL("hero-home.jpg", root)),
   ]);
 
@@ -67,5 +68,7 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   assert.match(styles, /\.site-header\{min-height:82px/);
   assert.match(styles, /\.offer-hero\{min-height:680px;padding:clamp\(34px,5vw,64px\) clamp\(16px,4vw,56px\)/);
   assert.match(styles, /url\("hero-home\.jpg"\)/);
+  assert.match(home, /20260918-black-palette-v2/);
+  assert.match(cacheRules, /no-cache, no-store, must-revalidate/);
   assert.ok(heroImage.size > 0);
 });

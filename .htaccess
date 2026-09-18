@@ -17,6 +17,11 @@ DirectoryIndex index.html
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  <FilesMatch "\.(html?|css|js|svg)$">
+    Header always set Cache-Control "no-cache, no-store, must-revalidate"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
+  </FilesMatch>
 </IfModule>
 
 <IfModule mod_deflate.c>
