@@ -69,7 +69,7 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   assert.match(styles, /\.site-header\{min-height:82px/);
   assert.match(styles, /\.offer-hero\{min-height:680px;padding:clamp\(34px,5vw,64px\) clamp\(16px,4vw,56px\)/);
   assert.match(styles, /url\("hero-home\.jpg"\)/);
-  assert.match(home, /20260918-advisor-v5/);
+  assert.match(home, /20260918-seo-a11y-v6/);
   assert.match(cacheRules, /no-cache, no-store, must-revalidate/);
   assert.ok(heroImage.size > 0);
 });
@@ -87,4 +87,20 @@ test("uses the shared Vermieter-style advisor portrait layout", async () => {
   assert.match(styles, /\.advisor-portrait img\{[^}]*aspect-ratio:4\/3/);
   assert.match(styles, /grid-template-columns:minmax\(280px,390px\) minmax\(360px,1fr\)/);
   assert.ok(portrait.size > 10_000);
+});
+
+test("publishes accessibility tools, exit intent and GEO-readable entities", async () => {
+  const [home, tools, styles, sitemap] = await Promise.all([
+    read("index.html"), read("site-tools.js"), read("styles.css"), read("sitemap.xml"),
+  ]);
+  assert.match(home, /site-tools\.js\?v=20260918-a11y-exit-v1/);
+  assert.match(home, /data-exit-intent/);
+  assert.match(home, /"@type":"InsuranceAgency"/);
+  assert.match(home, /"@type":"WebSite"/);
+  assert.match(home, /"@type":"FAQPage"/);
+  assert.match(home, /Offizielle ARAG Produktinformationen/);
+  assert.match(tools, /data-a11y-option="contrast"/);
+  assert.match(tools, /Die Auswahl wird nicht gespeichert/);
+  assert.match(styles, /\.a11y-tools/);
+  assert.match(sitemap, /2026-09-18/);
 });
