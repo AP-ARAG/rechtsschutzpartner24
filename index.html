@@ -12,7 +12,7 @@
   <link rel="icon" href="/favicon-32x32.png?v=20260902-logo" type="image/png" sizes="32x32">
   <link rel="shortcut icon" href="/favicon.ico?v=20260902-logo" type="image/x-icon">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260902-logo" sizes="180x180">
-  <link rel="stylesheet" href="styles.css?v=20260907-v24-network">
+  <link rel="stylesheet" href="styles.css?v=20260918-compact-header">
   <script defer src="script.js?v=20260902-clean"></script>
   <script defer src="sword-cursor.js?v=20260902-static"></script>
 </head>
@@ -32,26 +32,28 @@
 
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand-link" href="/" aria-label="RechtsschutzPartner24 Startseite"><span class="brand-mark" aria-hidden="true">ARAG</span><span class="brand-copy"><strong>RechtsschutzPartner24</strong><small>ARAG Rechtsschutz persönlich und verständlich beraten</small></span></a>
+      <a class="brand-link" href="/" aria-label="RechtsschutzPartner24 Startseite"><span class="brand-mark" aria-hidden="true">ARAG</span><span class="brand-copy"><strong>Hauptgeschäftsstelle Augsburg</strong><small>ARAG Rechtsschutz persönlich und verständlich beraten</small></span></a>
       <a class="outline-button" href="#angebot">Jetzt Rückruf anfordern</a>
     </div>
   </header>
 
   <main id="main">
-    <section class="offer-card" id="angebot" aria-labelledby="hero-title">
-      <h1 id="hero-title">Sofort-Rechtsschutz ohne Wartezeit<br>auch rückwirkend!</h1>
-      <p class="hero-subline">Für Privatkunden, Selbstständige, Vermieter und Unternehmen</p>
+    <section class="offer-hero" aria-label="Rechtsschutz-Angebot">
+      <div class="offer-card" id="angebot" aria-labelledby="hero-title">
+        <h1 id="hero-title">Sofort-Rechtsschutz ohne Wartezeit<br>auch rückwirkend!</h1>
+        <p class="hero-subline">Für Privatkunden, Selbstständige, Vermieter und Unternehmen</p>
 
-      <div class="funnel-intro">
-        <h2>Jetzt Angebot einholen</h2>
-        <p id="stepLabel" aria-live="polite">Schritt 1 von 6</p>
+        <div class="funnel-intro">
+          <h2>Jetzt Angebot einholen</h2>
+          <p id="stepLabel" aria-live="polite">Schritt 1 von 6</p>
+        </div>
+        <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+        <form id="funnelForm" action="contact.php" method="post" novalidate>
+          <div id="funnelContent"></div>
+          <div class="funnel-actions" id="funnelActions"></div>
+          <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
+        </form>
       </div>
-      <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
-      <form id="funnelForm" action="contact.php" method="post" novalidate>
-        <div id="funnelContent"></div>
-        <div class="funnel-actions" id="funnelActions"></div>
-        <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
-      </form>
     </section>
 
     <section class="services section" id="services">

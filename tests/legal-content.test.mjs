@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
@@ -52,4 +52,19 @@ test("links every page into the V24 insurance family", async () => {
     assert.match(page, /home-5021386578\.app-ionos\.space/);
     assert.match(page, /Zwischen Versicherungswelten wechseln/);
   }
+});
+
+test("matches the compact shared header and Vermieter hero spacing", async () => {
+  const [home, styles, heroImage] = await Promise.all([
+    read("index.html"),
+    read("styles.css"),
+    stat(new URL("hero-home.jpg", root)),
+  ]);
+
+  assert.match(home, /Hauptgeschäftsstelle Augsburg/);
+  assert.match(home, /class="offer-hero"/);
+  assert.match(styles, /\.site-header\{min-height:82px/);
+  assert.match(styles, /\.offer-hero\{min-height:680px;padding:clamp\(34px,5vw,64px\) clamp\(16px,4vw,56px\)/);
+  assert.match(styles, /url\("hero-home\.jpg"\)/);
+  assert.ok(heroImage.size > 0);
 });
