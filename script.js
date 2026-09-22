@@ -66,23 +66,25 @@ const funnelSteps = [
   }
 ];
 
-let currentStep = 0;
-const formData = { bereiche: [] };
-const birthParts = { day: "", month: "", year: "" };
-let birthAdvanceTimer = null;
-const funnelStartedAt = Date.now();
-const funnelContent = document.getElementById("funnelContent");
-const funnelActions = document.getElementById("funnelActions");
-const formStatus = document.getElementById("formStatus");
-const stepLabel = document.getElementById("stepLabel");
-const progressBar = document.getElementById("progressBar");
-const funnelForm = document.getElementById("funnelForm");
-
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>'"]/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
   })[character]);
 }
+
+function setupFunnel(funnelRoot) {
+let currentStep = 0;
+const formData = { bereiche: [] };
+const birthParts = { day: "", month: "", year: "" };
+let birthAdvanceTimer = null;
+const funnelStartedAt = Date.now();
+const funnelContent = funnelRoot.querySelector(".funnel-content");
+const funnelActions = funnelRoot.querySelector(".funnel-actions");
+const formStatus = funnelRoot.querySelector(".form-status");
+const stepLabel = funnelRoot.querySelector(".step-label");
+const progressBar = funnelRoot.querySelector(".progress-bar");
+const funnelForm = funnelRoot.querySelector(".funnel-form");
+if (!funnelContent || !funnelActions || !formStatus || !stepLabel || !progressBar || !funnelForm) return;
 
 function renderFunnel() {
   const step = funnelSteps[currentStep];
@@ -135,10 +137,10 @@ function renderFunnel() {
   funnelContent.innerHTML = html;
   funnelActions.innerHTML = "";
   if (currentStep > 0) {
-    funnelActions.insertAdjacentHTML("beforeend", '<button class="funnel-button secondary" type="button" id="backButton">‹ Zurück</button>');
+    funnelActions.insertAdjacentHTML("beforeend", '<button class="funnel-button secondary" type="button" data-funnel-action="back">‹ Zurück</button>');
   }
   const label = step.submit ? "Anfrage senden ›" : "Weiter ›";
-  funnelActions.insertAdjacentHTML("beforeend", `<button class="funnel-button primary" type="button" id="nextButton">${label}</button>`);
+  funnelActions.insertAdjacentHTML("beforeend", `<button class="funnel-button primary" type="button" data-funnel-action="next">${label}</button>`);
 
   funnelContent.querySelectorAll(".option").forEach((button) => {
     button.addEventListener("click", () => selectOption(step, button.dataset.value));
@@ -152,8 +154,8 @@ function renderFunnel() {
       formStatus.textContent = "";
     }
   }));
-  document.getElementById("backButton")?.addEventListener("click", goBack);
-  document.getElementById("nextButton")?.addEventListener("click", goNext);
+  funnelActions.querySelector('[data-funnel-action="back"]')?.addEventListener("click", goBack);
+  funnelActions.querySelector('[data-funnel-action="next"]')?.addEventListener("click", goNext);
 }
 
 function bindBirthdateFields() {
@@ -343,7 +345,7 @@ async function goNext() {
 }
 
 async function submitRequest() {
-  const submitButton = document.getElementById("nextButton");
+  const submitButton = funnelActions.querySelector('[data-funnel-action="next"]');
   const privacyCheckbox = funnelContent.querySelector('[name="datenschutz_bestaetigt"]');
   const firstInfoCheckbox = funnelContent.querySelector('[name="erstinformation_digital"]');
   const privacyLabel = privacyCheckbox?.closest(".consent");
@@ -387,8 +389,8 @@ async function submitRequest() {
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result.ok) throw new Error(result.message || "Übermittlung fehlgeschlagen");
     funnelContent.innerHTML = '<div class="success"><span class="success-mark">✓</span><h3>Vielen Dank für Ihre Anfrage!</h3><p>Ihre Angaben wurden sicher übermittelt. Ein Rechtsschutzexperte meldet sich zeitnah bei Ihnen.</p></div>';
-    funnelActions.innerHTML = '<button class="funnel-button secondary" type="button" id="restartButton">Neue Anfrage</button>';
-    document.getElementById("restartButton").addEventListener("click", resetFunnel);
+    funnelActions.innerHTML = '<button class="funnel-button secondary" type="button" data-funnel-action="restart">Neue Anfrage</button>';
+    funnelActions.querySelector('[data-funnel-action="restart"]').addEventListener("click", resetFunnel);
     stepLabel.textContent = "Anfrage gesendet";
     progressBar.style.width = "100%";
   } catch (error) {
@@ -411,6 +413,9 @@ function resetFunnel() {
 
 funnelForm.addEventListener("submit", (event) => event.preventDefault());
 renderFunnel();
+}
+
+document.querySelectorAll("[data-funnel]").forEach(setupFunnel);
 
 const cookieBanner = document.getElementById("cookieBanner");
 const cookieSettings = document.getElementById("cookieSettings");
