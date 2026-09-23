@@ -10,7 +10,7 @@
   const toolbar = doc.createElement("div");
   toolbar.className = "a11y-tools";
   toolbar.innerHTML = `
-    <button class="a11y-trigger" type="button" aria-expanded="false" aria-controls="a11y-panel">
+    <button class="a11y-trigger" type="button" aria-label="Barrierefreiheit" aria-expanded="false" aria-controls="a11y-panel">
       <span aria-hidden="true">Aa</span><strong>Barrierefreiheit</strong>
     </button>
     <aside class="a11y-panel" id="a11y-panel" aria-labelledby="a11y-title" hidden>

@@ -69,7 +69,7 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   assert.match(styles, /\.site-header\{min-height:82px/);
   assert.match(styles, /\.offer-hero\{min-height:680px;padding:clamp\(34px,5vw,64px\) clamp\(16px,4vw,56px\)/);
   assert.match(styles, /url\("hero-home\.jpg"\)/);
-  assert.match(home, /20260922-a11y-fix-v1/);
+  assert.match(home, /20260922-a11y-ui-v2/);
   assert.equal((home.match(/data-funnel/g) || []).length, 2);
   assert.match(cacheRules, /no-cache, no-store, must-revalidate/);
   assert.ok(heroImage.size > 0);
@@ -94,7 +94,7 @@ test("publishes accessibility tools, exit intent and GEO-readable entities", asy
   const [home, tools, styles, sitemap] = await Promise.all([
     read("index.html"), read("site-tools.js"), read("styles.css"), read("sitemap.xml"),
   ]);
-  assert.match(home, /site-tools\.js\?v=20260922-a11y-stable-v3/);
+  assert.match(home, /site-tools\.js\?v=20260922-a11y-ui-v4/);
   assert.match(home, /data-exit-intent/);
   assert.match(home, /"@type":"InsuranceAgency"/);
   assert.match(home, /"@type":"WebSite"/);
@@ -102,9 +102,12 @@ test("publishes accessibility tools, exit intent and GEO-readable entities", asy
   assert.match(home, /Offizielle ARAG Produktinformationen/);
   assert.match(tools, /data-a11y-option="contrast"/);
   assert.match(tools, /Die Auswahl wird nicht gespeichert/);
+  assert.match(tools, /aria-label="Barrierefreiheit"/);
   assert.match(styles, /\.a11y-tools/);
   assert.match(styles, /\.a11y-panel\[hidden\]/);
   assert.match(styles, /safe-area-inset-bottom/);
+  assert.match(styles, /\.a11y-trigger\{position:relative;width:52px/);
+  assert.match(styles, /\.a11y-options button strong::after/);
   assert.doesNotMatch(styles, /a11y-high-contrast body\{[^}]*filter:/);
   assert.match(sitemap, /2026-09-18/);
 });
