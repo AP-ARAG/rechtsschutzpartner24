@@ -56,7 +56,7 @@ test("links every page into the V24 insurance family", async () => {
     assert.match(page, /https:\/\/home-5021372330\.app-ionos\.space\//);
     assert.match(page, /https:\/\/vermieterrechtsschutz24\.com/);
     assert.match(page, /tiersafe\.de/);
-    assert.match(page, /home-5021386578\.app-ionos\.space/);
+    assert.match(page, /home-5021372330\.app-ionos\.space\/private-krankenversicherung/);
     assert.match(page, /Zwischen Versicherungswelten wechseln/);
   }
 });
