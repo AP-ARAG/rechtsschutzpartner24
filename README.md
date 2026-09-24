@@ -7,7 +7,7 @@ Eigenständige HTML/CSS/JavaScript-Website mit einem kleinen PHP-Endpunkt für A
 - `index.html` – Startseite und Angebotsstrecke
 - `styles.css` – responsives Layout
 - `script.js` – Formularlogik und Cookie-Einwilligung
-- `contact.php` – Versand der Anfrage an `info@rechtsschutzpartner24.de`
+- `contact.php` – Versand der Anfrage an `leads.ap.arag@gmail.com`
 - `impressum.html` und `datenschutz.html` – rechtliche Seiten
 
 ## IONOS Deploy Now
