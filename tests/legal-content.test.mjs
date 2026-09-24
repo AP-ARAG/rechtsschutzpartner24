@@ -79,8 +79,7 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   assert.match(styles, /\.option\{[^}]*min-width:0;[^}]*overflow-wrap:anywhere;[^}]*hyphens:auto;/);
   assert.equal((home.match(/data-funnel/g) || []).length, 2);
   for (const anchor of [
-    "start", "angebot", "services", "rechtsschutzbereiche", "benefits", "leistungen-vorteile",
-    "vorteile", "faq", "ansprechpartner", "abschluss-anfrage", "kontakt-rechtliches",
+    "start", "angebot", "bereiche", "schutz", "vorteile", "fragen", "berater", "anfrage", "kontakt",
   ]) {
     assert.match(home, new RegExp(`id="${anchor}"`));
   }
