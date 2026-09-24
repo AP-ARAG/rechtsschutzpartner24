@@ -4,6 +4,7 @@
 :root{--yellow:#f8d32c;--ink:#000;--muted:#4b4b4b;--line:#e5e5e5}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+main section[id],main h2[id],.offer-card[id],footer[id]{scroll-margin-top:104px}
 body{margin:0;color:var(--ink);background:#fff;font-family:"Open Sans",Arial,sans-serif;font-size:16px;line-height:1.5}
 body.modal-open{overflow:hidden}
 button,input{font:inherit}

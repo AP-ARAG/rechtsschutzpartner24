@@ -75,9 +75,16 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   assert.match(styles, /\.offer-hero\{min-height:680px;padding:clamp\(34px,5vw,64px\) clamp\(16px,4vw,56px\)/);
   assert.match(styles, /\.offer-hero\{[^}]*place-items:start center/);
   assert.match(styles, /url\("hero-home\.jpg"\)/);
-  assert.match(home, /20260924-menu-v3/);
+  assert.match(home, /20260924-anchors-v4/);
   assert.match(styles, /\.option\{[^}]*min-width:0;[^}]*overflow-wrap:anywhere;[^}]*hyphens:auto;/);
   assert.equal((home.match(/data-funnel/g) || []).length, 2);
+  for (const anchor of [
+    "start", "angebot", "services", "rechtsschutzbereiche", "benefits", "leistungen-vorteile",
+    "vorteile", "faq", "ansprechpartner", "abschluss-anfrage", "kontakt-rechtliches",
+  ]) {
+    assert.match(home, new RegExp(`id="${anchor}"`));
+  }
+  assert.match(styles, /scroll-margin-top:104px/);
   assert.match(cacheRules, /no-cache, no-store, must-revalidate/);
   assert.ok(heroImage.size > 0);
 });
