@@ -68,8 +68,9 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   assert.match(home, /class="offer-hero"/);
   assert.match(styles, /\.site-header\{min-height:82px/);
   assert.match(styles, /\.offer-hero\{min-height:680px;padding:clamp\(34px,5vw,64px\) clamp\(16px,4vw,56px\)/);
+  assert.match(styles, /\.offer-hero\{[^}]*place-items:start center/);
   assert.match(styles, /url\("hero-home\.jpg"\)/);
-  assert.match(home, /20260922-a11y-ui-v2/);
+  assert.match(home, /20260924-funnel-ui-v1/);
   assert.equal((home.match(/data-funnel/g) || []).length, 2);
   assert.match(cacheRules, /no-cache, no-store, must-revalidate/);
   assert.ok(heroImage.size > 0);
