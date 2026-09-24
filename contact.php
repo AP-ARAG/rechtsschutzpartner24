@@ -3,10 +3,43 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
+header('X-Content-Type-Options: nosniff');
+
+$allowedOrigins = [
+    'https://rechtsschutzpartner24.de',
+    'https://www.rechtsschutzpartner24.de',
+    'https://vermieterrechtsschutz24.com',
+    'https://www.vermieterrechtsschutz24.com',
+    'https://tiersafe.de',
+    'https://www.tiersafe.de',
+    'https://home-5021372330.app-ionos.space',
+    'https://home-5021386578.app-ionos.space',
+    'https://versicherungsnavigator24.de',
+    'https://www.versicherungsnavigator24.de',
+    'https://privatkrankenversicherung24.de',
+    'https://www.privatkrankenversicherung24.de',
+];
+$origin = rtrim((string)($_SERVER['HTTP_ORIGIN'] ?? ''), '/');
+if ($origin !== '') {
+    if (!in_array($origin, $allowedOrigins, true)) {
+        http_response_code(403);
+        echo json_encode(['ok' => false, 'message' => 'Ungültige Herkunft.']);
+        exit;
+    }
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Accept, Content-Type');
+    header('Vary: Origin');
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    header('Allow: POST');
+    header('Allow: POST, OPTIONS');
     echo json_encode(['ok' => false, 'message' => 'Methode nicht erlaubt']);
     exit;
 }
@@ -151,7 +184,148 @@ function send_via_smtp(
     }
 }
 
-if (clean_value('website') !== '') {
+function clean_text(mixed $value, int $maxLength = 300): string
+{
+    $text = trim((string)$value);
+    $text = str_replace(["\r", "\n", "\0"], ' ', $text);
+    return function_exists('mb_substr')
+        ? mb_substr($text, 0, $maxLength, 'UTF-8')
+        : substr($text, 0, $maxLength);
+}
+
+/** @return string[] */
+function answer_lines(string $json): array
+{
+    $decoded = json_decode($json, true);
+    if (!is_array($decoded)) {
+        return [];
+    }
+
+    $lines = [];
+    $append = static function (mixed $value, string $label = '') use (&$lines, &$append): void {
+        if (count($lines) >= 30) {
+            return;
+        }
+        if (is_array($value)) {
+            foreach ($value as $key => $child) {
+                $append($child, is_string($key) ? $key : $label);
+            }
+            return;
+        }
+        $clean = clean_text($value);
+        if ($clean !== '') {
+            $lines[] = ($label !== '' ? clean_text($label, 80) . ': ' : '- ') . $clean;
+        }
+    };
+    $append($decoded);
+    return $lines;
+}
+
+/** @param array<string, string> $config */
+function deliver_lead(array $config, string $recipient, string $replyTo, string $subject, string $message): void
+{
+    $smtpConfigured = config_value($config, 'MAIL_HOST') !== ''
+        && (int)config_value($config, 'MAIL_PORT') > 0
+        && config_value($config, 'MAIL_USERNAME') !== ''
+        && config_value($config, 'MAIL_PASSWORD') !== ''
+        && config_value($config, 'MAIL_FROM_ADDRESS') !== '';
+
+    if ($smtpConfigured) {
+        send_via_smtp($config, $recipient, $replyTo, $subject, $message);
+        return;
+    }
+
+    $headers = implode("\r\n", [
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: 8bit',
+        'From: Versicherungsanfragen <info@rechtsschutzpartner24.de>',
+        'Reply-To: ' . $replyTo,
+    ]);
+    $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+    if (!mail($recipient, $encodedSubject, $message, $headers)) {
+        throw new RuntimeException('PHP mail() konnte die Nachricht nicht annehmen.');
+    }
+}
+
+if (clean_value('website') !== '' || clean_value('_honey') !== '') {
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+$formType = clean_value('form_type', 40) ?: 'rechtsschutz';
+$genericLabels = [
+    'navigator' => 'Versicherungsnavigator24',
+    'tier' => 'TierSafe',
+    'pkv' => 'PrivatKrankenversicherung24',
+    'vermieter' => 'Vermieterrechtsschutz24',
+];
+
+if ($formType !== 'rechtsschutz') {
+    if (!array_key_exists($formType, $genericLabels)) {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'message' => 'Unbekanntes Formular.']);
+        exit;
+    }
+    if (clean_value('datenschutz_bestaetigt', 10) !== 'ja') {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'message' => 'Bitte bestätigen Sie die Kenntnisnahme der Datenschutzerklärung.']);
+        exit;
+    }
+    if (clean_value('erstinformation_digital', 10) !== 'ja') {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'message' => 'Bitte stimmen Sie der digitalen Bereitstellung der Erstinformation zu.']);
+        exit;
+    }
+
+    $name = clean_value('name', 120);
+    $email = clean_value('email', 254);
+    $phone = clean_value('phone', 50);
+    if (strlen($name) < 2 || $email === '' || $phone === '') {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'message' => 'Bitte geben Sie Name, E-Mail-Adresse und Telefonnummer vollständig an.']);
+        exit;
+    }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'message' => 'Bitte geben Sie eine gültige E-Mail-Adresse an.']);
+        exit;
+    }
+    if (!preg_match('/^[0-9+()\/ .-]{6,30}$/', $phone)) {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'message' => 'Bitte geben Sie eine gültige Telefonnummer an.']);
+        exit;
+    }
+
+    $details = answer_lines((string)($_POST['answers_json'] ?? ''));
+    $sourceUrl = clean_value('source_url', 500);
+    $lines = [
+        'Neue unverbindliche Beratungsanfrage',
+        '------------------------------------',
+        '',
+        'Quelle: ' . $genericLabels[$formType],
+        'Name: ' . $name,
+        'E-Mail: ' . $email,
+        'Telefon: ' . $phone,
+        '',
+        'Funnel-Angaben:',
+        ...($details !== [] ? $details : ['Keine Auswahl übermittelt']),
+        '',
+        'Datenschutzerklärung: Kenntnisnahme bestätigt',
+        'Erstinformation: digitaler Bereitstellung ausdrücklich zugestimmt',
+        'Seite: ' . ($sourceUrl !== '' ? $sourceUrl : clean_text($_SERVER['HTTP_REFERER'] ?? 'Nicht verfügbar', 500)),
+        'Eingegangen am: ' . (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->format('d.m.Y H:i') . ' Uhr',
+    ];
+    $configPath = __DIR__ . '/.env';
+    $config = is_readable($configPath) ? (parse_ini_file($configPath, false, INI_SCANNER_RAW) ?: []) : [];
+    try {
+        deliver_lead($config, 'leads.ap.arag@gmail.com', $email, 'Neue Anfrage über ' . $genericLabels[$formType], implode("\r\n", $lines));
+    } catch (Throwable $error) {
+        error_log('Kontaktformular: ' . $error->getMessage());
+        http_response_code(500);
+        echo json_encode(['ok' => false, 'message' => 'Die Nachricht konnte nicht versendet werden.']);
+        exit;
+    }
     echo json_encode(['ok' => true]);
     exit;
 }
@@ -209,7 +383,7 @@ if (clean_value('erstinformation_digital', 10) !== 'ja') {
     exit;
 }
 
-$recipient = 'info@rechtsschutzpartner24.de';
+$recipient = 'leads.ap.arag@gmail.com';
 $subject = 'Neue Rechtsschutz-Anfrage über rechtsschutzpartner24.de';
 $lines = [
     'Neue unverbindliche Angebotsanfrage',
@@ -238,7 +412,7 @@ $config = is_readable($configPath)
     : [];
 
 try {
-    send_via_smtp($config, $recipient, $data['email'], $subject, implode("\r\n", $lines));
+    deliver_lead($config, $recipient, $data['email'], $subject, implode("\r\n", $lines));
 } catch (Throwable $error) {
     error_log('Kontaktformular: ' . $error->getMessage());
     http_response_code(500);

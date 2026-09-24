@@ -34,6 +34,11 @@ test("requires adult use, privacy acknowledgement and electronic first informati
   }
   assert.match(client, /latestAdultBirthDate/);
   assert.match(endpoint, /new DateTimeImmutable\('-18 years'\)/);
+  assert.match(endpoint, /leads\.ap\.arag@gmail\.com/);
+  assert.match(endpoint, /Access-Control-Allow-Origin/);
+  assert.match(endpoint, /'navigator'.*'TierSafe'|'tier' => 'TierSafe'/s);
+  assert.match(endpoint, /'pkv' => 'PrivatKrankenversicherung24'/);
+  assert.match(endpoint, /deliver_lead/);
   assert.match(client, /ga-disable-AW-18073108906/);
 });
 
