@@ -78,6 +78,8 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   assert.match(home, /20260924-anchors-v4/);
   assert.match(styles, /\.option\{[^}]*min-width:0;[^}]*overflow-wrap:anywhere;[^}]*hyphens:auto;/);
   assert.equal((home.match(/data-funnel/g) || []).length, 2);
+  assert.match(home, /href="tel:\+491721597777"/);
+  assert.match(home, /0172 1597777 anrufen/);
   for (const anchor of [
     "start", "angebot", "bereiche", "schutz", "vorteile", "fragen", "berater", "anfrage", "kontakt",
   ]) {
