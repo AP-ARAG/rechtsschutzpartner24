@@ -23,6 +23,8 @@ test("publishes complete provider and intermediary information", async () => {
   assert.match(firstInformation, /Beratung, Produktangebot und Vergütung/);
   assert.match(firstInformation, /Beteiligungsverhältnisse/);
   assert.match(privacy, /Pflicht-Checkbox.*zugänglich.*keine Einwilligung/s);
+  assert.match(privacy, /Versicherungsnavigator24.*Vermieterrechtsschutz24.*TierSafe.*PrivatKrankenversicherung24/s);
+  assert.match(privacy, /leads\.ap\.arag@gmail\.com/);
   assert.doesNotMatch(imprint, /IHK-Register-Nr.*wird nachgereicht/i);
 });
 
@@ -116,5 +118,5 @@ test("publishes accessibility tools, exit intent and GEO-readable entities", asy
   assert.match(styles, /\.a11y-trigger\{position:relative;width:52px/);
   assert.match(styles, /\.a11y-options button strong::after/);
   assert.doesNotMatch(styles, /a11y-high-contrast body\{[^}]*filter:/);
-  assert.match(sitemap, /2026-09-18/);
+  assert.match(sitemap, /2026-09-24/);
 });

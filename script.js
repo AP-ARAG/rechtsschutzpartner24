@@ -128,8 +128,8 @@ function renderFunnel() {
     }).join("");
     if (step.submit) {
       html += '<label class="honeypot" aria-hidden="true">Bitte nicht ausfüllen<input name="website" type="text" tabindex="-1" autocomplete="off"></label>';
-      html += '<label class="consent"><input name="datenschutz_bestaetigt" type="checkbox" required aria-required="true"><span><a href="datenschutz.html" target="_blank" rel="noopener">Datenschutz</a> zur Kenntnis genommen.</span></label>';
-      html += '<label class="consent"><input name="erstinformation_digital" type="checkbox" required aria-required="true"><span>Digitaler <a href="erstinformation.html" target="_blank" rel="noopener">Erstinformation</a> ausdrücklich zugestimmt.</span></label>';
+      html += '<label class="consent"><input name="datenschutz_bestaetigt" type="checkbox" required aria-required="true"><span><a href="datenschutz.html" target="_blank" rel="noopener noreferrer">Datenschutz</a> zur Kenntnis genommen.</span></label>';
+      html += '<label class="consent"><input name="erstinformation_digital" type="checkbox" required aria-required="true"><span>Digitaler <a href="erstinformation.html" target="_blank" rel="noopener noreferrer">Erstinformation</a> ausdrücklich zugestimmt.</span></label>';
     }
     html += "</div>";
   }
