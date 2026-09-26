@@ -221,6 +221,34 @@ function answer_lines(string $json): array
     return $lines;
 }
 
+/** @return string[] */
+function attribution_lines(): array
+{
+    $fields = [
+        'funnel_id' => ['Formular-ID', 100],
+        'utm_source' => ['UTM-Quelle', 200],
+        'utm_medium' => ['UTM-Medium', 200],
+        'utm_campaign' => ['UTM-Kampagne', 300],
+        'utm_term' => ['UTM-Keyword', 300],
+        'utm_content' => ['UTM-Inhalt', 300],
+        'gclid' => ['Google Click-ID', 300],
+        'gbraid' => ['Google GBRAID', 300],
+        'wbraid' => ['Google WBRAID', 300],
+        'msclkid' => ['Microsoft Click-ID', 300],
+        'fbclid' => ['Meta Click-ID', 300],
+        'source_url' => ['Einstiegs-/Formularseite', 500],
+        'referrer_url' => ['Referrer', 500],
+    ];
+    $lines = [];
+    foreach ($fields as $key => [$label, $maxLength]) {
+        $value = clean_value($key, $maxLength);
+        if ($value !== '') {
+            $lines[] = $label . ': ' . $value;
+        }
+    }
+    return $lines !== [] ? $lines : ['Keine Kampagnenparameter übermittelt'];
+}
+
 /** @param array<string, string> $config */
 function deliver_lead(array $config, string $recipient, string $replyTo, string $subject, string $message): void
 {
@@ -299,6 +327,7 @@ if ($formType !== 'rechtsschutz') {
 
     $details = answer_lines((string)($_POST['answers_json'] ?? ''));
     $sourceUrl = clean_value('source_url', 500);
+    $attribution = attribution_lines();
     $lines = [
         'Neue unverbindliche Beratungsanfrage',
         '------------------------------------',
@@ -310,6 +339,9 @@ if ($formType !== 'rechtsschutz') {
         '',
         'Funnel-Angaben:',
         ...($details !== [] ? $details : ['Keine Auswahl übermittelt']),
+        '',
+        'Tracking / Attribution:',
+        ...$attribution,
         '',
         'Datenschutzerklärung: Kenntnisnahme bestätigt',
         'Erstinformation: digitaler Bereitstellung ausdrücklich zugestimmt',
@@ -385,6 +417,7 @@ if (clean_value('erstinformation_digital', 10) !== 'ja') {
 
 $recipient = 'leads.ap.arag@gmail.com';
 $subject = 'Neue Rechtsschutz-Anfrage über rechtsschutzpartner24.de';
+$attribution = attribution_lines();
 $lines = [
     'Neue unverbindliche Angebotsanfrage',
     '------------------------------------',
@@ -400,6 +433,9 @@ $lines = [
     '',
     'E-Mail: ' . $data['email'],
     'Telefon: ' . $data['telefon'],
+    '',
+    'Tracking / Attribution:',
+    ...$attribution,
     '',
     'Datenschutzerklärung: Kenntnisnahme bestätigt',
     'Erstinformation: digitaler Bereitstellung ausdrücklich zugestimmt',

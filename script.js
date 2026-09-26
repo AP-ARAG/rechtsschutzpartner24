@@ -66,6 +66,42 @@ const funnelSteps = [
   }
 ];
 
+const attributionKeys = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "gclid", "gbraid", "wbraid", "msclkid", "fbclid"];
+
+function readLeadAttribution() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    ...Object.fromEntries(attributionKeys.map((key) => [key, params.get(key)?.trim() || ""])),
+    source_url: window.location.href,
+    referrer_url: document.referrer
+  };
+}
+
+function emitLeadConversion(formId, attribution) {
+  const detail = {
+    event: "insurance_lead_success",
+    lead_type: "rechtsschutz",
+    form_id: formId,
+    keyword: attribution.utm_term,
+    campaign: attribution.utm_campaign,
+    source: attribution.utm_source
+  };
+  try {
+    window.dispatchEvent(new CustomEvent("insurance:lead-success", { detail }));
+    if (localStorage.getItem("rsp24-cookie-consent") === "all") {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push(detail);
+      window.gtag?.("event", "generate_lead", {
+        form_id: formId,
+        campaign: attribution.utm_campaign,
+        term: attribution.utm_term
+      });
+    }
+  } catch (error) {
+    console.warn("Lead-Tracking konnte nicht ausgelöst werden.", error);
+  }
+}
+
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>'"]/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
@@ -74,6 +110,7 @@ function escapeHtml(value = "") {
 
 function setupFunnel(funnelRoot) {
 let currentStep = 0;
+const funnelId = (funnelRoot.dataset.funnelId || "rechtsschutz-lead-submit").replace(/[^a-z0-9_-]/gi, "-");
 const formData = { bereiche: [] };
 const birthParts = { day: "", month: "", year: "" };
 let birthAdvanceTimer = null;
@@ -140,7 +177,8 @@ function renderFunnel() {
     funnelActions.insertAdjacentHTML("beforeend", '<button class="funnel-button secondary" type="button" data-funnel-action="back">‹ Zurück</button>');
   }
   const label = step.submit ? "Anfrage senden ›" : "Weiter ›";
-  funnelActions.insertAdjacentHTML("beforeend", `<button class="funnel-button primary" type="button" data-funnel-action="next">${label}</button>`);
+  const conversionAttributes = step.submit ? ` id="${funnelId}" data-conversion="insurance-lead"` : "";
+  funnelActions.insertAdjacentHTML("beforeend", `<button class="funnel-button primary" type="button" data-funnel-action="next"${conversionAttributes}>${label}</button>`);
 
   funnelContent.querySelectorAll(".option").forEach((button) => {
     button.addEventListener("click", () => selectOption(step, button.dataset.value));
@@ -379,6 +417,9 @@ async function submitRequest() {
   payload.append("datenschutz_bestaetigt", "ja");
   payload.append("erstinformation_digital", "ja");
   payload.append("started_at", String(funnelStartedAt));
+  payload.append("funnel_id", funnelId);
+  const attribution = readLeadAttribution();
+  Object.entries(attribution).forEach(([key, value]) => payload.append(key, value));
 
   try {
     const response = await fetch(funnelForm.action, {
@@ -388,6 +429,7 @@ async function submitRequest() {
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result.ok) throw new Error(result.message || "Übermittlung fehlgeschlagen");
+    emitLeadConversion(funnelId, attribution);
     funnelContent.innerHTML = '<div class="success"><span class="success-mark">✓</span><h3>Vielen Dank für Ihre Anfrage!</h3><p>Ihre Angaben wurden sicher übermittelt. Ein Rechtsschutzexperte meldet sich zeitnah bei Ihnen.</p></div>';
     funnelActions.innerHTML = '<button class="funnel-button secondary" type="button" data-funnel-action="restart">Neue Anfrage</button>';
     funnelActions.querySelector('[data-funnel-action="restart"]').addEventListener("click", resetFunnel);

@@ -25,6 +25,9 @@ test("publishes complete provider and intermediary information", async () => {
   assert.match(privacy, /Pflicht-Checkbox.*zugänglich.*keine Einwilligung/s);
   assert.match(privacy, /Versicherungsnavigator24.*Vermieterrechtsschutz24.*TierSafe.*PrivatKrankenversicherung24/s);
   assert.match(privacy, /leads\.ap\.arag@gmail\.com/);
+  assert.match(privacy, /UTM-Keyword/);
+  assert.match(privacy, /generate_lead/);
+  assert.match(privacy, /26\. September 2026/);
   assert.doesNotMatch(imprint, /IHK-Register-Nr.*wird nachgereicht/i);
 });
 
@@ -42,6 +45,13 @@ test("requires adult use, privacy acknowledgement and electronic first informati
   assert.match(endpoint, /'pkv' => 'PrivatKrankenversicherung24'/);
   assert.match(endpoint, /deliver_lead/);
   assert.match(client, /ga-disable-AW-18073108906/);
+  assert.match(client, /insurance_lead_success/);
+  assert.match(client, /insurance:lead-success/);
+  assert.match(client, /generate_lead/);
+  assert.match(client, /utm_term/);
+  assert.match(endpoint, /UTM-Keyword/);
+  assert.match(endpoint, /Google Click-ID/);
+  assert.match(endpoint, /funnel_id/);
 });
 
 test("limits every menu to Rechtsschutz and Vermieter", async () => {
@@ -77,7 +87,10 @@ test("matches the compact shared header and Vermieter hero spacing", async () =>
   assert.match(styles, /url\("hero-home\.jpg"\)/);
   assert.match(home, /20260924-anchors-v4/);
   assert.match(styles, /\.option\{[^}]*min-width:0;[^}]*overflow-wrap:anywhere;[^}]*hyphens:auto;/);
-  assert.equal((home.match(/data-funnel/g) || []).length, 2);
+  assert.equal((home.match(/\sdata-funnel(?=\s|>)/g) || []).length, 2);
+  assert.match(home, /data-funnel-id="rechtsschutz-hero-lead-submit"/);
+  assert.match(home, /data-funnel-id="rechtsschutz-bottom-lead-submit"/);
+  assert.match(home, /script\.js\?v=20260926-lead-tracking-v1/);
   assert.match(home, /href="tel:\+491721597777"/);
   assert.match(home, /0172 1597777 anrufen/);
   for (const anchor of [
