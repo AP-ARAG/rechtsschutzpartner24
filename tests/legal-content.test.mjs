@@ -23,11 +23,12 @@ test("publishes complete provider and intermediary information", async () => {
   assert.match(firstInformation, /Beratung, Produktangebot und Vergütung/);
   assert.match(firstInformation, /Beteiligungsverhältnisse/);
   assert.match(privacy, /Pflicht-Checkbox.*zugänglich.*keine Einwilligung/s);
-  assert.match(privacy, /Versicherungsnavigator24.*Vermieterrechtsschutz24.*TierSafe.*PrivatKrankenversicherung24/s);
+  assert.match(privacy, /Formular-Endpunkt.*Vermieterrechtsschutz24/s);
   assert.match(privacy, /leads\.ap\.arag@gmail\.com/);
+  assert.match(privacy, /info@rechtsschutzpartner24\.de/);
   assert.match(privacy, /UTM-Keyword/);
   assert.match(privacy, /generate_lead/);
-  assert.match(privacy, /26\. September 2026/);
+  assert.match(privacy, /29\. September 2026/);
   assert.doesNotMatch(imprint, /IHK-Register-Nr.*wird nachgereicht/i);
 });
 
@@ -40,6 +41,7 @@ test("requires adult use, privacy acknowledgement and electronic first informati
   assert.match(client, /latestAdultBirthDate/);
   assert.match(endpoint, /new DateTimeImmutable\('-18 years'\)/);
   assert.match(endpoint, /leads\.ap\.arag@gmail\.com/);
+  assert.match(endpoint, /\$formType === 'vermieter'[\s\S]*info@rechtsschutzpartner24\.de/);
   assert.match(endpoint, /Access-Control-Allow-Origin/);
   assert.match(endpoint, /'navigator'.*'TierSafe'|'tier' => 'TierSafe'/s);
   assert.match(endpoint, /'pkv' => 'PrivatKrankenversicherung24'/);

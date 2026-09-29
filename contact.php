@@ -350,8 +350,11 @@ if ($formType !== 'rechtsschutz') {
     ];
     $configPath = __DIR__ . '/.env';
     $config = is_readable($configPath) ? (parse_ini_file($configPath, false, INI_SCANNER_RAW) ?: []) : [];
+    $recipient = $formType === 'vermieter'
+        ? 'info@rechtsschutzpartner24.de'
+        : 'leads.ap.arag@gmail.com';
     try {
-        deliver_lead($config, 'leads.ap.arag@gmail.com', $email, 'Neue Anfrage über ' . $genericLabels[$formType], implode("\r\n", $lines));
+        deliver_lead($config, $recipient, $email, 'Neue Anfrage über ' . $genericLabels[$formType], implode("\r\n", $lines));
     } catch (Throwable $error) {
         error_log('Kontaktformular: ' . $error->getMessage());
         http_response_code(500);
