@@ -7,8 +7,13 @@ name: "Deploy Now: Orchestration"
 run-name: "Deploy Now: Build rechtsschutzpartner24 · ${{ github.event.head_commit.message || format('Triggered by {0}', github.triggering_actor) }}"
 
 on:
-  - push
-  - workflow_dispatch
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ionos-production-rechtsschutzpartner24
+  cancel-in-progress: false
 
 jobs:
   retrieve-project:
@@ -24,7 +29,7 @@ jobs:
         with:
           api-key: ${{ secrets.IONOS_API_KEY }}
           service-host: api-eu.ionos.space
-          project-id: ffe2f0ed-9834-442f-9e98-4969d0b5ef66
+          project-id: f661e7b9-c102-4253-879f-3c698e93fb21
           action: retrieve-info
 
 
@@ -50,6 +55,6 @@ jobs:
         with:
           api-key: ${{ secrets.IONOS_API_KEY }}
           service-host: api-eu.ionos.space
-          project-id: ffe2f0ed-9834-442f-9e98-4969d0b5ef66
+          project-id: f661e7b9-c102-4253-879f-3c698e93fb21
           branch-id: ${{ needs.retrieve-project.outputs.branch-id }}
           action: dispatch-deployments
