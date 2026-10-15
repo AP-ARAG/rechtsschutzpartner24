@@ -25,7 +25,7 @@ jobs:
       - name: Test metadata and error redaction offline
         run: php tests/privacy-metadata.php contact.php
 
-      - name: Reject HTTP execution of the CLI-only runner
+      - name: Reject runner HTTP and verify strict CORS preflights
         run: |
           php -S 127.0.0.1:8091 -t . >/tmp/privacy-runner-http.log 2>&1 &
           privacy_test_server_pid=$!
@@ -39,6 +39,50 @@ jobs:
               throw new RuntimeException('The CLI-only runner must reject HTTP requests before reading source input.');
           }
           echo "HTTP runner blocked with empty 404 response.\n";
+
+          function verify_options(string $origin, int $expectedStatus, ?string $expectedAllowOrigin): void
+          {
+              $context = stream_context_create(['http' => [
+                  'method' => 'OPTIONS',
+                  'header' => "Origin: " . $origin . "\r\nAccess-Control-Request-Method: POST\r\n",
+                  'ignore_errors' => true,
+                  'timeout' => 5,
+              ]]);
+              $body = file_get_contents('http://127.0.0.1:8091/contact.php', false, $context);
+              $responseHeaders = $http_response_header ?? [];
+              preg_match('~^HTTP/\\S+ (\\d+)~', $responseHeaders[0] ?? '', $statusMatch);
+              $headers = [];
+              foreach ($responseHeaders as $header) {
+                  $parts = explode(':', $header, 2);
+                  if (count($parts) === 2) {
+                      $headers[strtolower(trim($parts[0]))] = trim($parts[1]);
+                  }
+              }
+              if ((int)($statusMatch[1] ?? 0) !== $expectedStatus || ($headers['access-control-allow-origin'] ?? null) !== $expectedAllowOrigin) {
+                  throw new RuntimeException('Strict Origin preflight result mismatch.');
+              }
+              if ($expectedStatus === 204 && ($body !== '' || ($headers['access-control-allow-methods'] ?? '') !== 'POST, OPTIONS')) {
+                  throw new RuntimeException('Allowed preflight must return empty204 and expected methods.');
+              }
+          }
+          foreach ([
+              'https://home-5021659963.app-ionos.space',
+              'https://home-5021659988.app-ionos.space',
+              'https://home-5021659993.app-ionos.space',
+              'https://rechtsschutzpartner24.de',
+              'https://tiersafe.de',
+          ] as $origin) {
+              verify_options($origin, 204, $origin);
+          }
+          foreach ([
+              'https://example.invalid',
+              'https://home-5021659963.app-ionos.space.example.invalid',
+              'http://home-5021659963.app-ionos.space',
+              'null',
+          ] as $origin) {
+              verify_options($origin, 403, null);
+          }
+          echo "Strict Origin OPTIONS checks passed (5 positive, 4 negative; no POST).\n";
           PHP
 
   frontend:
