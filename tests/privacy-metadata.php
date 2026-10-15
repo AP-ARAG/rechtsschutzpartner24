@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+if (PHP_SAPI !== 'cli') {
+    http_response_code(404);
+    exit;
+}
+
 // Offline only: extract pure helpers without including the endpoint, .env or any mail function.
 $sourcePath = $argv[1] ?? 'contact.php';
 $source = file_get_contents($sourcePath);
