@@ -25,8 +25,8 @@
   <link rel="icon" href="/favicon-32x32.png?v=20260902-logo" type="image/png" sizes="32x32">
   <link rel="shortcut icon" href="/favicon.ico?v=20260902-logo" type="image/x-icon">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260902-logo" sizes="180x180">
-  <link rel="stylesheet" href="styles.css?v=20260930-responsive-v5">
-  <script defer src="script.js?v=20260926-lead-tracking-v1"></script>
+  <link rel="stylesheet" href="styles.css?v=20261016-consent-v2">
+  <script defer src="script.js?v=20261016-consent-v2"></script>
   <script defer src="site-tools.js?v=20260922-a11y-ui-v4"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"InsuranceAgency","@id":"https://rechtsschutzpartner24.de/#agency","name":"ARAG Hauptgeschäftsstelle Augsburg","alternateName":"RechtsschutzPartner24","url":"https://rechtsschutzpartner24.de/","telephone":"+49821509280","email":"info@rechtsschutzpartner24.de","areaServed":"DE","address":{"@type":"PostalAddress","streetAddress":"Wankelstraße 2","postalCode":"86356","addressLocality":"Neusäß","addressCountry":"DE"},"contactPoint":{"@type":"ContactPoint","telephone":"+49821509280","email":"info@rechtsschutzpartner24.de","contactType":"customer service","availableLanguage":"de","areaServed":"DE"},"knowsAbout":["Rechtsschutzversicherung","Privatrechtsschutz","Berufsrechtsschutz","Verkehrsrechtsschutz","Wohnrechtsschutz"],"sameAs":["https://www.arag-partner.de/gst-augsburg/"]},{"@type":"Person","@id":"https://rechtsschutzpartner24.de/#advisor","name":"Agapios Papadakis","jobTitle":"Hauptgeschäftsstellenleiter ARAG Versicherungen","worksFor":{"@id":"https://rechtsschutzpartner24.de/#agency"},"sameAs":["https://www.arag-partner.de/gst-augsburg/"]},{"@type":"WebSite","@id":"https://rechtsschutzpartner24.de/#website","url":"https://rechtsschutzpartner24.de/","name":"RechtsschutzPartner24","inLanguage":"de-DE","publisher":{"@id":"https://rechtsschutzpartner24.de/#agency"}},{"@type":"Service","name":"ARAG Rechtsschutzberatung","serviceType":"Rechtsschutzversicherung","url":"https://rechtsschutzpartner24.de/","provider":{"@id":"https://rechtsschutzpartner24.de/#agency"},"areaServed":{"@type":"Country","name":"Deutschland"},"subjectOf":{"@id":"https://rechtsschutzpartner24.de/#faq"}},{"@type":"FAQPage","@id":"https://rechtsschutzpartner24.de/#faq","mainEntity":[{"@type":"Question","name":"Welche Rechtsschutzbereiche kann ich absichern?","acceptedAnswer":{"@type":"Answer","text":"Je nach Bedarf lassen sich unter anderem Privat, Beruf, Verkehr und Wohnen kombinieren. Maßgeblich sind das individuelle Angebot und die Versicherungsbedingungen."}},{"@type":"Question","name":"Gibt es Rechtsschutz ohne Wartezeit?","acceptedAnswer":{"@type":"Answer","text":"Für bestimmte Leistungsfälle und Tarife kann Schutz ohne Wartezeit möglich sein. Voraussetzungen, Ausschlüsse und ein möglicher rückwirkender Schutz werden vor Abschluss individuell geprüft."}},{"@type":"Question","name":"Ist die Anfrage bereits ein Versicherungsantrag?","acceptedAnswer":{"@type":"Answer","text":"Nein. Das Formular dient der unverbindlichen Bedarfserfassung. Ein Versicherungsschutz entsteht erst nach Antrag, Annahme und den vereinbarten Bedingungen."}},{"@type":"Question","name":"Wer berät mich?","acceptedAnswer":{"@type":"Answer","text":"Agapios Papadakis berät als gebundener Versicherungsvertreter der ARAG und persönlicher Ansprechpartner der ARAG Hauptgeschäftsstelle Augsburg."}}]}]}</script>
 </head>
@@ -171,10 +171,17 @@
   <div class="cookie-banner" id="cookieBanner" hidden>
     <div class="cookie-dialog" role="dialog" aria-modal="true" aria-labelledby="cookieTitle">
       <h2 id="cookieTitle">Cookie-Einstellungen</h2>
-      <p>Notwendige Funktionen laufen immer. Statistik und Marketing aktivieren wir erst nach Ihrer Zustimmung.</p>
+      <p>Notwendige Funktionen laufen immer. Sie können Statistik und Marketing getrennt erlauben oder ablehnen. Ohne Ihre Auswahl werden keine Google-Dienste geladen.</p>
+      <div class="cookie-purposes">
+        <label><input type="checkbox" checked disabled> <span><strong>Notwendig</strong><small>Speichert Ihre Auswahl für höchstens 180 Tage.</small></span></label>
+        <label><input type="checkbox" id="analyticsCookies"> <span><strong>Statistik · Google Analytics</strong><small>Misst die Nutzung der Website und erfolgreiche Anfragen.</small></span></label>
+        <label><input type="checkbox" id="marketingCookies"> <span><strong>Marketing · Google Ads</strong><small>Misst den Erfolg unserer Google-Werbeanzeigen.</small></span></label>
+      </div>
+      <p class="cookie-note">Google kann Daten auch in den USA verarbeiten. Sie können Ihre Einwilligung jederzeit hier über „Cookies“ ändern. Beim Deaktivieren wird diese Seite neu geladen; noch nicht gesendete Formularangaben gehen dabei verloren.</p>
       <div class="cookie-actions">
         <button class="cookie-primary" type="button" id="acceptCookies">Alle akzeptieren</button>
-        <button class="cookie-secondary" type="button" id="rejectCookies">Nur notwendige</button>
+        <button class="cookie-primary" type="button" id="rejectCookies">Nur notwendige</button>
+        <button class="cookie-secondary" type="button" id="saveCookies">Auswahl speichern</button>
       </div>
       <a href="datenschutz.html">Mehr zum Datenschutz</a>
     </div>

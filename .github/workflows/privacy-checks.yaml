@@ -1,0 +1,40 @@
+name: Privacy and contact checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ["8.2", "8.3"]
+    container: php:${{ matrix.php }}-cli
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check PHP syntax
+        run: |
+          php -l contact.php
+          php -l tests/privacy-metadata.php
+      - name: Test metadata and error redaction offline
+        run: php tests/privacy-metadata.php contact.php
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check and exercise consent and attribution offline
+        run: |
+          node --check script.js
+          node tests/consent-smoke.cjs
