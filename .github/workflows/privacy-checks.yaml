@@ -25,6 +25,22 @@ jobs:
       - name: Test metadata and error redaction offline
         run: php tests/privacy-metadata.php contact.php
 
+      - name: Reject HTTP execution of the CLI-only runner
+        run: |
+          php -S 127.0.0.1:8091 -t . >/tmp/privacy-runner-http.log 2>&1 &
+          privacy_test_server_pid=$!
+          trap 'kill "$privacy_test_server_pid"' EXIT
+          sleep 1
+          php <<'PHP'
+          <?php
+          $context = stream_context_create(['http' => ['ignore_errors' => true]]);
+          $body = file_get_contents('http://127.0.0.1:8091/tests/privacy-metadata.php?synthetic-runner-probe', false, $context);
+          if (!str_contains($http_response_header[0] ?? '', ' 404 ') || $body !== '') {
+              throw new RuntimeException('The CLI-only runner must reject HTTP requests before reading source input.');
+          }
+          echo "HTTP runner blocked with empty 404 response.\n";
+          PHP
+
   frontend:
     runs-on: ubuntu-latest
     steps:
