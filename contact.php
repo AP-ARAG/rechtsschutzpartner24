@@ -83,7 +83,7 @@ function smtp_response($socket, array $expectedCodes): string
 
     $code = (int)substr($response, 0, 3);
     if (!in_array($code, $expectedCodes, true)) {
-        throw new RuntimeException('Unerwartete SMTP-Antwort: ' . trim($response));
+        throw new RuntimeException('Unerwarteter SMTP-Statuscode.', $code);
     }
 
     return $response;
@@ -133,7 +133,7 @@ function send_via_smtp(
     );
 
     if ($socket === false) {
-        throw new RuntimeException('SMTP-Verbindung fehlgeschlagen: ' . $errorNumber . ' ' . $errorMessage);
+        throw new RuntimeException('SMTP-Verbindung fehlgeschlagen.', (int)$errorNumber);
     }
 
     try {
@@ -221,6 +221,23 @@ function answer_lines(string $json): array
     return $lines;
 }
 
+function minimized_url(string $value, bool $includePath = true): string
+{
+    $parts = parse_url(str_replace(["\r", "\n", "\0"], '', trim($value)));
+    if (!is_array($parts) || !isset($parts['scheme'], $parts['host'])) {
+        return '';
+    }
+    $scheme = strtolower($parts['scheme']);
+    if (!in_array($scheme, ['https', 'http'], true)) {
+        return '';
+    }
+    $origin = $scheme . '://' . $parts['host'];
+    if (isset($parts['port'])) {
+        $origin .= ':' . $parts['port'];
+    }
+    return $origin . ($includePath ? ($parts['path'] ?? '/') : '');
+}
+
 /** @return string[] */
 function attribution_lines(): array
 {
@@ -231,17 +248,15 @@ function attribution_lines(): array
         'utm_campaign' => ['UTM-Kampagne', 300],
         'utm_term' => ['UTM-Keyword', 300],
         'utm_content' => ['UTM-Inhalt', 300],
-        'gclid' => ['Google Click-ID', 300],
-        'gbraid' => ['Google GBRAID', 300],
-        'wbraid' => ['Google WBRAID', 300],
-        'msclkid' => ['Microsoft Click-ID', 300],
-        'fbclid' => ['Meta Click-ID', 300],
         'source_url' => ['Einstiegs-/Formularseite', 500],
         'referrer_url' => ['Referrer', 500],
     ];
     $lines = [];
     foreach ($fields as $key => [$label, $maxLength]) {
         $value = clean_value($key, $maxLength);
+        if ($key === 'source_url' || $key === 'referrer_url') {
+            $value = minimized_url($value, $key === 'source_url');
+        }
         if ($value !== '') {
             $lines[] = $label . ': ' . $value;
         }
@@ -326,7 +341,7 @@ if ($formType !== 'rechtsschutz') {
     }
 
     $details = answer_lines((string)($_POST['answers_json'] ?? ''));
-    $sourceUrl = clean_value('source_url', 500);
+    $sourceUrl = minimized_url(clean_value('source_url', 500));
     $attribution = attribution_lines();
     $lines = [
         'Neue unverbindliche Beratungsanfrage',
@@ -345,7 +360,7 @@ if ($formType !== 'rechtsschutz') {
         '',
         'Datenschutzerklärung: Kenntnisnahme bestätigt',
         'Erstinformation: digitaler Bereitstellung ausdrücklich zugestimmt',
-        'Seite: ' . ($sourceUrl !== '' ? $sourceUrl : clean_text($_SERVER['HTTP_REFERER'] ?? 'Nicht verfügbar', 500)),
+        'Seite: ' . ($sourceUrl !== '' ? $sourceUrl : (minimized_url(clean_text($_SERVER['HTTP_REFERER'] ?? '', 500)) ?: 'Nicht verfügbar')),
         'Eingegangen am: ' . (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->format('d.m.Y H:i') . ' Uhr',
     ];
     $configPath = __DIR__ . '/.env';
@@ -356,7 +371,7 @@ if ($formType !== 'rechtsschutz') {
     try {
         deliver_lead($config, $recipient, $email, 'Neue Anfrage über ' . $genericLabels[$formType], implode("\r\n", $lines));
     } catch (Throwable $error) {
-        error_log('Kontaktformular: ' . $error->getMessage());
+        error_log('Kontaktformular: Stufe=Versand; Statuscode=' . (int)$error->getCode() . '; Referenz=' . bin2hex(random_bytes(8)));
         http_response_code(500);
         echo json_encode(['ok' => false, 'message' => 'Die Nachricht konnte nicht versendet werden.']);
         exit;
@@ -453,7 +468,7 @@ $config = is_readable($configPath)
 try {
     deliver_lead($config, $recipient, $data['email'], $subject, implode("\r\n", $lines));
 } catch (Throwable $error) {
-    error_log('Kontaktformular: ' . $error->getMessage());
+    error_log('Kontaktformular: Stufe=Versand; Statuscode=' . (int)$error->getCode() . '; Referenz=' . bin2hex(random_bytes(8)));
     http_response_code(500);
     echo json_encode(['ok' => false, 'message' => 'Die Nachricht konnte nicht versendet werden.']);
     exit;
