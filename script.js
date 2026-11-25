@@ -153,7 +153,7 @@ function renderFunnel() {
         ? formData.bereiche.includes(label)
         : formData[step.key] === label;
       const visual = asset.endsWith(".png")
-        ? `<img src="${asset}" alt="" width="83" height="83">`
+        ? `<span class="icon-tile" aria-hidden="true"><img src="${asset}" alt="" width="32" height="32"></span>`
         : `<span class="option-symbol" aria-hidden="true">${escapeHtml(asset)}</span>`;
       return `<button class="option${selected ? " selected" : ""}" type="button" data-value="${escapeHtml(label)}" aria-pressed="${selected}">${visual}<span>${escapeHtml(label)}</span></button>`;
     }).join("");
@@ -442,7 +442,7 @@ async function submitRequest() {
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result.ok) throw new Error(result.message || "Übermittlung fehlgeschlagen");
     emitLeadConversion(funnelId, attribution);
-    funnelContent.innerHTML = '<div class="success"><span class="success-mark">✓</span><h3>Vielen Dank für Ihre Anfrage!</h3><p>Ihre Angaben wurden sicher übermittelt. Ein Rechtsschutzexperte meldet sich zeitnah bei Ihnen.</p></div>';
+    funnelContent.innerHTML = '<div class="success"><span class="success-mark" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m5 12 4 4L19 6"/></svg></span><h3>Vielen Dank für Ihre Anfrage!</h3><p>Ihre Angaben wurden sicher übermittelt. Ein Rechtsschutzexperte meldet sich zeitnah bei Ihnen.</p></div>';
     funnelActions.innerHTML = '<button class="funnel-button secondary" type="button" data-funnel-action="restart">Neue Anfrage</button>';
     funnelActions.querySelector('[data-funnel-action="restart"]').addEventListener("click", resetFunnel);
     stepLabel.textContent = "Anfrage gesendet";
